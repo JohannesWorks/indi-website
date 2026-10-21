@@ -1,5 +1,9 @@
 name: Build and deploy website
 
+# Pull requests: build only.
+# Push to main: build and deploy to new.indilib.org (test site).
+# indilib.org: run this workflow by hand from the Actions tab and type "indilib.org" to confirm.
+
 on:
   push:
     branches:
@@ -7,34 +11,96 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Deploy to the live site? Type "indilib.org" to confirm.'
+        required: true
+        default: ""
+
+concurrency:
+  group: deploy-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  build:
+  check:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
+      - run: npm ci
+      - run: npm run build
 
-      - name: Install dependencies
-        run: npm ci
+  staging:
+    name: Deploy to new.indilib.org
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
 
-      - name: Build Astro site
+      - name: Build test site
         run: npm run build
+        env:
+          SITE_URL: https://new.indilib.org
+          # Keeps the test site out of search engines
+          STAGING: "true"
 
-      # Deploys only from main, and only once the DEPLOY_PATH variable is set in the repo settings
-      - name: rsync deployment
-        if: github.event_name == 'push' && vars.DEPLOY_PATH != ''
+      - name: rsync to new.indilib.org
         uses: burnett01/rsync-deployments@7.1.0
         with:
           switches: -azv --delete
           path: dist/
-          remote_path: ${{ vars.DEPLOY_PATH }}
+          remote_path: ${{ secrets.DEPLOY_PATH }}
           remote_host: ${{ secrets.REMOTE_HOST }}
           remote_user: ${{ secrets.REMOTE_USER }}
           remote_key: ${{ secrets.REMOTE_PRIVATE_KEY }}
+
+  production:
+    name: Deploy to indilib.org
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation and secrets
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+          HAS_SECRETS: ${{ secrets.PROD_REMOTE_HOST != '' && secrets.PROD_REMOTE_USER != '' && secrets.PROD_REMOTE_PRIVATE_KEY != '' && secrets.PROD_DEPLOY_PATH != '' }}
+        run: |
+          if [ "$CONFIRM" != "indilib.org" ]; then
+            echo "::error::Type indilib.org in the confirm box to deploy to the live site."
+            exit 1
+          fi
+          if [ "$HAS_SECRETS" != "true" ]; then
+            echo "::error::Set PROD_REMOTE_HOST, PROD_REMOTE_USER, PROD_REMOTE_PRIVATE_KEY and PROD_DEPLOY_PATH first."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+
+      - name: Build live site
+        run: npm run build
+        env:
+          SITE_URL: https://indilib.org
+
+      - name: rsync to indilib.org
+        uses: burnett01/rsync-deployments@7.1.0
+        with:
+          switches: -azv --delete
+          path: dist/
+          remote_path: ${{ secrets.PROD_DEPLOY_PATH }}
+          remote_host: ${{ secrets.PROD_REMOTE_HOST }}
+          remote_user: ${{ secrets.PROD_REMOTE_USER }}
+          remote_key: ${{ secrets.PROD_REMOTE_PRIVATE_KEY }}

@@ -4,7 +4,8 @@ import remarkAlert from "remark-github-blockquote-alert";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://indilib.org",
+  // SITE_URL is set by the deploy workflow: https://new.indilib.org for the test site
+  site: process.env.SITE_URL ?? "https://indilib.org",
   // Pages are written as /page.html, matching the old Joomla URLs
   build: { format: "file" },
   markdown: {

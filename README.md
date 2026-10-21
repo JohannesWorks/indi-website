@@ -56,6 +56,14 @@ The page appears at `/tutorials/my-tutorial.html`. Topics are listed in `src/dat
 
 ## Deploy
 
-Every push to `main` builds the site. GitHub Actions copies `dist/` to the server with rsync,
-the same way as [drivers-docs](https://github.com/indilib/drivers-docs).
-It needs the `REMOTE_HOST`, `REMOTE_USER` and `REMOTE_PRIVATE_KEY` secrets and the `DEPLOY_PATH` variable.
+GitHub Actions copies the built site to the server with rsync, the same way as
+[drivers-docs](https://github.com/indilib/drivers-docs).
+
+| When | Where | Secrets |
+|---|---|---|
+| Pull request | Build only | none |
+| Push to `main` | [new.indilib.org](https://new.indilib.org), the test site, hidden from search engines | `REMOTE_HOST`, `REMOTE_USER`, `REMOTE_PRIVATE_KEY`, `DEPLOY_PATH` |
+| By hand: Actions → "Build and deploy website" → Run workflow, type `indilib.org` | [indilib.org](https://indilib.org) | `PROD_REMOTE_HOST`, `PROD_REMOTE_USER`, `PROD_REMOTE_PRIVATE_KEY`, `PROD_DEPLOY_PATH` |
+
+The deploy uses `rsync --delete`: everything in the target folder that is not part of the site is removed.
+
