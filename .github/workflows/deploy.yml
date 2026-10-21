@@ -43,6 +43,25 @@ jobs:
       - name: Build site for ${{ env.SITE_URL }}
         run: npm run build
 
+      # rsync --delete removes everything in the target that is not part of the site,
+      # so refuse anything that looks like a top-level or home folder.
+      - name: Check deploy folder
+        if: github.event_name != 'pull_request'
+        env:
+          TARGET: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # Strip spaces and trailing slashes, then count the folder levels
+          t="$(printf '%s' "$TARGET" | tr -d '[:space:]' | sed -E 's#/+$##')"
+          rel="${t#\~/}"; rel="${rel#\~}"; rel="${rel#/}"
+          levels=$(printf '%s' "$rel" | tr '/' '\n' | grep -c .)
+          min=1
+          case "$t" in /*) min=3 ;; esac
+          if [ "$levels" -lt "$min" ] || printf '%s' "/$rel/" | grep -qE '/\.{1,2}/'; then
+            echo "::error::DEPLOY_PATH must be the site's own folder, for example public_html or /var/www/new.indilib.org/html. Absolute paths need at least 3 levels."
+            exit 1
+          fi
+          echo "Deploy folder accepted ($levels levels)."
+
       - name: rsync to the server
         if: github.event_name != 'pull_request'
         uses: burnett01/rsync-deployments@7.1.0
