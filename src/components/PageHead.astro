@@ -1,0 +1,14 @@
+---
+// Breadcrumbs, title and intro for hub and list pages.
+interface Props { title: string; crumbs?: { name: string; href: string }[] }
+const { title, crumbs = [] } = Astro.props;
+---
+<div class="wrap p-head">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    {crumbs.map((c) => <span><a href={c.href}>{c.name}</a></span>)}
+    <span>{title}</span>
+  </nav>
+  <h1>{title}</h1>
+  <slot />
+</div>

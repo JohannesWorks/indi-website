@@ -1,13 +1,21 @@
+---
+// Site footer
+const COLS: [string, [string, string][]][] = [
+  ["About", [["About INDI", "/about.html"], ["Features", "/about/features.html"], ["Ekos", "/about/ekos.html"], ["Clients", "/about/clients.html"], ["Contributors", "/about/contributors.html"], ["News", "/about/news.html"]]],
+  ["Develop", [["Developer manual", "/develop/developer-manual.html"], ["API reference", "/api/index.html"], ["Technical docs", "https://docs.indilib.org"], ["Python bindings", "/tutorials/indi-python-programming.html"], ["Source code", "https://github.com/indilib/indi"]]],
+  ["Use INDI", [["Download", "/download.html"], ["Tutorials", "/tutorials.html"], ["Drivers", "https://drivers.indilib.org"], ["Gallery", "/support/gallery.html"]]],
+  ["Support", [["FAQ", "/support/faq.html"], ["Forum", "https://forum.indilib.org"], ["Submit logs", "/support/logs-submission.html"], ["Report a bug", "https://github.com/indilib/indi/issues"]]],
+];
+---
 <footer class="site">
   <div class="wrap">
     <div class="about">
       <a class="brand" href="/"><img src="/img/logo.webp" alt=""><span><b>INDI</b><small>Open Astronomy Instrumentation</small></span></a>
       <p>Powered by the community, for the community. INDI is free software under the LGPL v2 license.</p>
     </div>
-    <div><h4>About</h4><ul><li><a href="/#how">Features</a></li><li><a href="/#news">News</a></li><li><a href="https://indilib.org/about/clients.html">Clients</a></li><li><a href="#">Contributors</a></li><li><a href="#">Ekos</a></li></ul></div>
-    <div><h4>Devices</h4><ul><li><a href="https://drivers.indilib.org">All drivers</a></li><li><a href="https://drivers.indilib.org/mounts">Mounts</a></li><li><a href="https://drivers.indilib.org/cameras">Cameras</a></li><li><a href="https://drivers.indilib.org/focusers">Focusers</a></li></ul></div>
-    <div><h4>Develop</h4><ul><li><a href="http://www.indilib.org/api/index.html">INDI API</a></li><li><a href="#">Developer manual</a></li><li><a href="#">Python bindings</a></li><li><a href="https://github.com/indilib/indi">Source code</a></li></ul></div>
-    <div><h4>Support</h4><ul><li><a href="https://forum.indilib.org">Forum</a></li><li><a href="https://indilib.org/support/faq.html">FAQ</a></li><li><a href="https://indilib.org/support/logs-submission.html">Submit logs</a></li><li><a href="https://github.com/indilib/indi/issues">Report a bug</a></li></ul></div>
+    {COLS.map(([head, links]) => (
+      <div><h4>{head}</h4><ul>{links.map(([label, href]) => <li><a href={href}>{label}</a></li>)}</ul></div>
+    ))}
   </div>
 </footer>
 <div class="legal"><div class="wrap"><span>© {new Date().getFullYear()} INDI Library</span><a href="https://github.com/indilib/indi-website">Edit this site on GitHub</a></div></div>

@@ -22,7 +22,7 @@ import "../styles/home.css";
           </div>
         </div>
         <div class="photo">
-          <img src="/img/img-6738.webp" alt="A community member's setup: an EQ8 mount and refractor on a deck, controlled from a laptop">
+          <img src="/img/img-6738.webp" alt="A community member's setup on a deck: a refractor and Raspberry Pis running StellarMate, controlled from a laptop with KStars">
           <span class="chip"><i></i>Mount · Tracking</span>
           <div class="capture">
             <img src="/img/m-45.webp" alt="">
@@ -34,7 +34,7 @@ import "../styles/home.css";
       <nav class="quick" aria-label="Start here">
         <a href="#install"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg><b>Download</b><span>Ubuntu, Raspberry Pi, Fedora, Arch, macOS</span></a>
         <a href="https://drivers.indilib.org"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-2h5L16 7"/></svg><b>Drivers</b><span>Mounts, cameras, focusers, domes and more</span></a>
-        <a href="http://www.indilib.org/api/index.html"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg><b>Develop</b><span>API, developer manual and Python bindings</span></a>
+        <a href="/develop.html"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg><b>Develop</b><span>API, developer manual and Python bindings</span></a>
         <a href="https://forum.indilib.org"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4Z"/></svg><b>Forum</b><span>Ask the community at forum.indilib.org</span></a>
       </nav>
     </div>
@@ -123,7 +123,7 @@ import "../styles/home.css";
     <div class="wrap">
       <div class="sec-head split">
         <div><p class="eyebrow">INDI clients</p><h2>Works with the software you already use</h2></div>
-        <a class="more" href="https://indilib.org/about/clients.html">All 27 clients</a>
+        <a class="more" href="/about/clients.html">All 27 clients</a>
       </div>
       <div class="clients">
         <span class="client"><img src="/img/kstars.webp" alt="">KStars / Ekos</span>
@@ -150,7 +150,7 @@ import "../styles/home.css";
       <div class="sec-head" style="margin:0">
         <p class="eyebrow">Download</p>
         <h2>Install INDI in a few commands</h2>
-        <p class="lede">Pick your system. The commands install the INDI library and all third party drivers.</p>
+        <p class="lede">Pick your system. The commands install the INDI library and all third party drivers. <a href="/download.html">More systems and details</a>.</p>
         <div class="flatpak"><b>Using KStars?</b> The KStars Flatpak already includes INDI and all third party drivers, on every Linux distribution. You don't need anything else.</div>
       </div>
       <div>
@@ -189,7 +189,7 @@ import "../styles/home.css";
     <div class="wrap">
       <div class="sec-head split">
         <div><p class="eyebrow">Captured with INDI</p><h2>From the community</h2><p class="lede">Images and setups shared by INDI users, with the gear behind each one.</p></div>
-        <a class="more" href="https://indilib.org/support/gallery.html">View the gallery</a>
+        <a class="more" href="/support/gallery.html">View the gallery</a>
       </div>
       <div class="shots">
         <figure class="shot s1"><img src="/img/ngc-7635.webp" alt="NGC 7635, the Bubble Nebula"><figcaption><b>NGC 7635 Bubble Nebula</b><span>RedCat51 · CEM25p · 533MC · 41×300s</span></figcaption></figure>
@@ -211,18 +211,15 @@ import "../styles/home.css";
             <div><h3>INDI Forum</h3><p>Our community forum, now on Discourse. Old forum links redirect to the same topic.</p></div>
             <a class="btn primary small" href="https://forum.indilib.org">Open forum.indilib.org</a>
           </header>
-          <ul class="topics">
-            <li><a href="https://forum.indilib.org">Seestar S50 through the Alpaca bridge: first light report</a><span class="n">24 replies</span><span class="cat">Smart telescopes</span></li>
-            <li><a href="https://forum.indilib.org">EQMod mount stops tracking after meridian flip</a><span class="n">11 replies</span><span class="cat">Mounts</span></li>
-            <li><a href="https://forum.indilib.org">Safety Monitor with a cloud sensor and roll-off roof</a><span class="n">7 replies</span><span class="cat">Observatory</span></li>
-            <li><a href="https://forum.indilib.org">Building indi-3rdparty on Raspberry Pi OS Trixie</a><span class="n">5 replies</span><span class="cat">Development</span></li>
+          <ul class="topics" id="topics" aria-live="polite">
+            <li class="loading"><span>Loading the latest topics…</span></li>
           </ul>
-          <p class="note">Example topics. On the live site this list loads from forum.indilib.org/latest.json in the browser.</p>
+          <p class="note" id="topics-note">Latest topics from forum.indilib.org.</p>
         </div>
         <div class="channels">
-          <a class="channel" href="https://indilib.org/support/faq.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><div><h3>FAQ</h3><p>Answers to the most common setup and connection questions.</p></div></a>
+          <a class="channel" href="/support/faq.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><div><h3>FAQ</h3><p>Answers to the most common setup and connection questions.</p></div></a>
           <a class="channel" href="https://github.com/indilib/indi/issues"><svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M3 13h3M18 13h3M4 19l3-2M20 19l-3-2"/></svg><div><h3>Report a bug</h3><p>File an issue on GitHub. Attach logs as explained in the logs guide.</p></div></a>
-          <a class="channel" href="https://indilib.org/support/community.html"><svg viewBox="0 0 24 24"><path d="M4 6h16v10H9l-5 4Z"/></svg><div><h3>Discord</h3><p>Quick chat with users and developers.</p></div></a>
+          <a class="channel" href="/support/logs-submission.html"><svg viewBox="0 0 24 24"><path d="M14 3H6v18h12V7Z"/><path d="M14 3v4h4M9 13l2 2-2 2M13 17h3"/></svg><div><h3>Submit logs</h3><p>How to collect KStars and INDI logs when you ask for help.</p></div></a>
           <a class="channel donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HBWELZ79SSSC6&amp;source=url"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg><div><h3>Support INDI</h3><p>INDI is built by volunteers. Donations keep the servers and the forum running.</p></div></a>
         </div>
       </div>
@@ -262,4 +259,25 @@ import "../styles/home.css";
       navigator.clipboard.writeText(text).then(function () { copy.textContent = "Copied"; setTimeout(function () { copy.textContent = "Copy"; }, 1600); }, selectCmd);
     } catch (e) { selectCmd(); }
   });
+
+  // ---------- Latest forum topics, read from Discourse in the browser ----------
+  (async () => {
+    const list = document.getElementById("topics");
+    const note = document.getElementById("topics-note");
+    if (!list || !note) return;
+    const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    try {
+      const res = await fetch("https://forum.indilib.org/latest.json", { headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(String(res.status));
+      const data = await res.json();
+      const cats = new Map<number, string>((data.categories ?? []).map((c: { id: number; name: string }) => [c.id, c.name]));
+      const topics = (data.topic_list?.topics ?? []).filter((t: { pinned: boolean }) => !t.pinned).slice(0, 5);
+      if (!topics.length) throw new Error("empty");
+      list.innerHTML = topics.map((t: { slug: string; id: number; title: string; posts_count: number; category_id: number }) =>
+        `<li><a href="https://forum.indilib.org/t/${t.slug}/${t.id}">${esc(t.title)}</a><span class="n">${t.posts_count - 1} replies</span><span class="cat">${esc(cats.get(t.category_id) ?? "")}</span></li>`).join("");
+    } catch {
+      list.innerHTML = '<li class="loading"><span>The latest topics could not be loaded here. <a href="https://forum.indilib.org">Visit the forum</a> to read them.</span></li>';
+      note.hidden = true;
+    }
+  })();
 </script>

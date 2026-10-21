@@ -120,5 +120,3 @@ If you are either reading a cloud cover when there are no clouds visible to the 
 Depending on your use, you might want a clouded warning when it’s more than 15% clods, or you might be happy with less than 50%? Edit this value to customize the alert (cloud flag).
 
 ![define-cloud-pnt](./8-define_cloud_pcnt.webp)
-
--   [Next](/support/tutorials/177-howto-configure-compile-wire-print-and-assemble-the-induino-meteostation.html?start=1 "Connecting to MeteoStation")

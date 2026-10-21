@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import HubCard from "../components/HubCard.astro";
+import "../styles/pages.css";
+---
+<Base title="Develop" description="Write INDI drivers and clients: developer manual, API reference, technical docs and tutorials.">
+  <PageHead title="Develop">
+    <p class="lede">Write drivers for new devices, build clients, or script your observatory. Start with the developer manual or the technical documentation, and look up classes in the API reference.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <div class="hub-grid">
+      <HubCard href="/develop/developer-manual.html" icon="book" title="Developer manual" text="The INDI protocol, the server, and how to build drivers." />
+      <HubCard href="https://docs.indilib.org" icon="docs" title="Technical documentation" text="Getting started, the INDI server, the protocol and scripting, at docs.indilib.org." />
+      <HubCard href="/api/index.html" icon="code" title="API reference" text="Classes and functions of the INDI Library, generated from the source." />
+      <HubCard href="/tutorials.html" icon="tutorial" title="Tutorials" text="Step-by-step guides, including writing drivers and clients." />
+      <HubCard href="/tutorials/indi-python-programming.html" icon="python" title="Python bindings" text="Control INDI devices from Python with pyindi-client." />
+      <HubCard href="/develop/arduino.html" icon="chip" title="Arduino" text="Turn an Arduino board into an INDI device with INDIDUINO." />
+      <HubCard href="/develop/video-tutorials.html" icon="video" title="Video tutorials" text="Watch how to build and debug INDI drivers." />
+      <HubCard href="https://github.com/indilib/indi" icon="github" title="Source code" text="The INDI Library on GitHub. Pull requests are welcome." />
+      <HubCard href="https://github.com/indilib/drivers-docs" icon="plug" title="Document your driver" text="Add your driver to drivers.indilib.org." />
+    </div>
+  </div>
+</Base>

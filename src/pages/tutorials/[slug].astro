@@ -4,6 +4,7 @@ import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { topicName } from "../../data/topics";
 import { sortedTutorials, minutes, tutorialUrl, type Tutorial } from "../../data/tutorials";
+import ArticleEnhance from "../../components/ArticleEnhance.astro";
 import "../../styles/tutorials.css";
 
 export async function getStaticPaths() {
@@ -70,45 +71,4 @@ const date = t.data.date?.toLocaleDateString("en-US", { year: "numeric", month: 
   </div>
 </Base>
 
-<script>
-  // Code blocks: a header with the language and a Copy button
-  const LANG: Record<string, string> = { shell: "shell", sh: "shell", bash: "shell", ini: "ini", cpp: "C++", python: "Python", xml: "XML", text: "text", plaintext: "text" };
-  document.querySelectorAll<HTMLPreElement>(".prose pre.astro-code").forEach((pre) => {
-    const box = document.createElement("div");
-    box.className = "code";
-    const head = document.createElement("header");
-    const label = document.createElement("span");
-    const lang = pre.dataset.language ?? "text";
-    label.textContent = LANG[lang] ?? lang;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.textContent = "Copy";
-    btn.addEventListener("click", () => {
-      const done = () => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy"), 1500); };
-      const select = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection()!; s.removeAllRanges(); s.addRange(r); btn.textContent = "Press Ctrl+C"; };
-      navigator.clipboard?.writeText(pre.innerText).then(done, select) ?? select();
-    });
-    head.append(label, btn);
-    pre.replaceWith(box);
-    box.append(head, pre);
-  });
-
-  // Table of contents: highlight the section in view; folds up on small screens
-  const toc = document.getElementById("toc") as HTMLDetailsElement | null;
-  if (toc) {
-    const links = [...toc.querySelectorAll("a")];
-    const heads = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))));
-    const spy = () => {
-      let cur = 0;
-      heads.forEach((h, i) => { if (h && h.getBoundingClientRect().top < 140) cur = i; });
-      links.forEach((a, i) => a.classList.toggle("on", i === cur));
-    };
-    addEventListener("scroll", spy, { passive: true });
-    spy();
-    const mq = matchMedia("(max-width: 1000px)");
-    const mode = () => { toc.open = !mq.matches; };
-    mq.addEventListener("change", mode);
-    mode();
-    toc.querySelector("summary")!.addEventListener("click", (e) => { if (!mq.matches) e.preventDefault(); });
-  }
-</script>
+<ArticleEnhance />

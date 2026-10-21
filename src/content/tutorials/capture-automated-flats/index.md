@@ -3,11 +3,12 @@ title: "Capture automated flats"
 description: "Capture flat frames automatically with the Ekos Capture module."
 topic: ekos
 author: "Jasem Mutlaq"
+cover: "./ekos_calibration_button.png"
 legacyUrl: "/support/tutorials/156-capture-automated-flats.html"
 legacyId: 156
 ---
 
-[](/images/ekos/ekos_calibration_button.png)
+![Calibration Options Button](./ekos_calibration_button.png)
 
 Ekos powerful Capture Module recently added support to automated capture of flat field frames. Using the capture sequence queue, it was always possible to capture flat images with manually-specified exposure times, and now completely automated flats are supported!
 
@@ -18,7 +19,7 @@ Once you select a flat frame from the _Type_ drop-down list, click the _Calibrat
 -   **Wall**: Before capturing flats, slew the telescope to a specific Azimuth/Altitude position on the wall where an evenly-illuminated panel is installed. If the light panel is controllable and is connected as an INDI device, Ekos will turn on/off the panel light as needed.
 -   **Dawn/Dusk**: Future options reserved for dawn/dusk flats but might not be implemented due to the unreliability and limited time of dawn/dusk flats.
 
-[](/images/ekos/ekos_calibration_options.png)
+![Calibration Options](./ekos_calibration_options.png)
 
 After selecting the flat source, you need to specify the flat desired duration:
 

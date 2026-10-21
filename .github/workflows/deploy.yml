@@ -43,6 +43,24 @@ jobs:
       - name: Build site for ${{ env.SITE_URL }}
         run: npm run build
 
+      # The API reference at /api/ is generated from the current INDI source with its Doxyfile,
+      # at the same URLs as on the old site (for example /api/classINDI_1_1BaseClient.html).
+      - name: Build API reference from INDI source
+        if: github.event_name != 'pull_request'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq doxygen > /dev/null
+          git clone --depth 1 https://github.com/indilib/indi.git "$RUNNER_TEMP/indi"
+          cd "$RUNNER_TEMP/indi"
+          (cat Doxyfile
+           echo "OUTPUT_DIRECTORY=$GITHUB_WORKSPACE/dist"
+           echo "HTML_OUTPUT=api"
+           echo "QUIET=YES"
+           echo "WARNINGS=NO"
+           echo "WARN_LOGFILE=/dev/null") | doxygen -
+          test -f "$GITHUB_WORKSPACE/dist/api/index.html"
+          echo "API reference: $(find "$GITHUB_WORKSPACE/dist/api" -type f | wc -l) files"
+
       # rsync --delete removes everything in the target that is not part of the site,
       # so refuse anything that looks like a top-level or home folder.
       # Exception: when the server locks the deploy key to one folder with rrsync, paths are

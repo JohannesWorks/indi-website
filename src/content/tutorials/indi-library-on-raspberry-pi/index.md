@@ -21,7 +21,7 @@ The following steps are applicable to RPi running the Raspbian OS:
     sudo apt-get install cdbs libcfitsio3-dev libnova-dev libusb-1.0-0-dev libjpeg-dev libusb-dev libtiff5-dev libftdi-dev fxload libkrb5-dev libcurl4-gnutls-dev dcraw libgphoto2-dev libgsl-dev dkms libboost-regex-dev libgps22 libdc1394-22-dev
     ```
 
-2.  [Download](/download/viewcategory/14-raspberry-pi.html) INDI Library for RPi
+2.  [Download](/download/raspberry-pi.html) INDI Library for RPi
 3.  Extract and Install INDI Library:
 
     ```shell
@@ -30,7 +30,7 @@ The following steps are applicable to RPi running the Raspbian OS:
     sudo dpkg -i *.deb
     ```
 
-Included in the INDI Library for RPi are INDI servers, tools, and drivers. The following are some of the drivers in the package. For a complete list, please check the [devices](/devices.html) page:
+Included in the INDI Library for RPi are INDI servers, tools, and drivers. The following are some of the drivers in the package. For a complete list, please check the [devices](https://drivers.indilib.org) page:
 
 | Driver | Executable |
 | --- | --- |

@@ -1,0 +1,20 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { childrenOf, pageUrl } from "../../data/pages";
+import "../../styles/pages.css";
+const news = await childrenOf("about/news");
+const fmt = (d?: Date) => d?.toLocaleDateString("en-US", { year: "numeric", month: "short" }) ?? "";
+---
+<Base title="News" description="Releases and stories from the INDI project.">
+  <PageHead title="News" crumbs={[{ name: "About", href: "/about.html" }]}>
+    <p class="lede">Releases and stories from the INDI project. For the latest changes, see the <a href="https://github.com/indilib/indi/releases">release notes on GitHub</a>.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <div class="plist">
+      {news.map((n) => (
+        <a href={pageUrl(n)}><span class="d">{fmt(n.data.date)}</span><b>{n.data.title}</b><span class="s">{n.data.description}</span></a>
+      ))}
+    </div>
+  </div>
+</Base>

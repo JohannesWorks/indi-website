@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import { childrenOf, pageUrl } from "../data/pages";
+import { ICON } from "../data/icons";
+import "../styles/pages.css";
+const systems = await childrenOf("download");
+---
+<Base title="Download" description="Install INDI on Ubuntu, Raspberry Pi, Fedora, Arch, openSUSE, Gentoo or macOS, or build it from source.">
+  <PageHead title="Download">
+    <p class="lede">Pick your system for install instructions. Packages include the INDI Library and third party drivers.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <p class="flatpak-note"><b>Using KStars?</b> The <a href="https://kstars.kde.org/download/linux/">KStars Flatpak</a> already includes INDI and all third party drivers, on every Linux distribution. You don't need anything else.</p>
+    <div class="hub-grid">
+      {systems.map((s) => (
+        <a class="hub-card" href={pageUrl(s)}>
+          <svg viewBox="0 0 24 24" set:html={s.id === "download/source" ? ICON.code : ICON.download} />
+          <b>{s.data.system}</b>
+          <span>{s.data.description}</span>
+        </a>
+      ))}
+    </div>
+    <p class="lede">The latest source releases are on <a href="https://github.com/indilib/indi/releases">GitHub</a>.</p>
+  </div>
+</Base>

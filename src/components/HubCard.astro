@@ -1,0 +1,12 @@
+---
+// One card on a hub page. External links get an arrow.
+import { ICON } from "../data/icons";
+interface Props { href: string; title: string; text: string; icon: keyof typeof ICON }
+const { href, title, text, icon } = Astro.props;
+const external = /^https?:/.test(href);
+---
+<a class="hub-card" href={href}>
+  <svg viewBox="0 0 24 24" set:html={ICON[icon]} />
+  <b class={external ? "ext" : undefined}>{title}</b>
+  <span>{text}</span>
+</a>

@@ -1,0 +1,67 @@
+---
+import { getImage } from "astro:assets";
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { ALBUMS, GALLERY } from "../../data/gallery";
+import "../../styles/pages.css";
+
+const files = import.meta.glob<{ default: ImageMetadata }>("../../assets/gallery/**/*.webp", { eager: true });
+const items = await Promise.all(GALLERY.map(async (g) => {
+  const src = files[`../../assets/gallery/${g.file}`].default;
+  const thumb = await getImage({ src, width: 480, format: "webp" });
+  const full = await getImage({ src, width: 1600, format: "webp" });
+  return { ...g, thumb: thumb.src, full: full.src };
+}));
+---
+<Base title="Gallery" description="Images and astrophotography setups shared by the INDI community.">
+  <PageHead title="Gallery" crumbs={[{ name: "Support", href: "/support.html" }]}>
+    <p class="lede">Images and setups shared by INDI users. Share yours on the <a href="https://forum.indilib.org">forum</a>.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    {ALBUMS.map((a) => (
+      <section id={a.id}>
+        <div class="album-head"><h2>{a.name}</h2><p>{a.description}</p></div>
+        <div class="gallery">
+          {items.filter((g) => g.album === a.id).map((g) => (
+            <button type="button" data-full={g.full} data-title={g.title} data-caption={g.caption}>
+              <img src={g.thumb} alt={g.title} loading="lazy" />
+              <span>{g.title}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+  <dialog class="lightbox" id="lightbox" aria-label="Image">
+    <div class="lb-bar">
+      <button type="button" data-step="-1" aria-label="Previous image">←</button>
+      <button type="button" data-step="1" aria-label="Next image">→</button>
+      <button type="button" data-close aria-label="Close">✕</button>
+    </div>
+    <figure style="margin:0">
+      <img id="lb-img" alt="" />
+      <figcaption><b id="lb-title"></b><span id="lb-caption"></span></figcaption>
+    </figure>
+  </dialog>
+</Base>
+
+<script>
+  // Lightbox: open an image, step through with the arrows, close with Escape
+  const dlg = document.getElementById("lightbox") as HTMLDialogElement;
+  const img = document.getElementById("lb-img") as HTMLImageElement;
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>(".gallery button")];
+  let cur = 0;
+  function show(i: number) {
+    cur = (i + buttons.length) % buttons.length;
+    const b = buttons[cur];
+    img.src = b.dataset.full!;
+    img.alt = b.dataset.title!;
+    document.getElementById("lb-title")!.textContent = b.dataset.title!;
+    document.getElementById("lb-caption")!.textContent = b.dataset.caption ?? "";
+  }
+  buttons.forEach((b, i) => b.addEventListener("click", () => { show(i); dlg.showModal(); }));
+  dlg.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((b) => b.addEventListener("click", () => show(cur + Number(b.dataset.step))));
+  dlg.querySelector("[data-close]")!.addEventListener("click", () => dlg.close());
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") show(cur + 1); if (e.key === "ArrowLeft") show(cur - 1); });
+</script>

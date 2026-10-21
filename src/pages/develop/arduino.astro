@@ -1,0 +1,17 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { childrenOf, pageUrl } from "../../data/pages";
+import "../../styles/pages.css";
+const pages = await childrenOf("develop/arduino");
+---
+<Base title="Arduino" description="Turn an Arduino board into an INDI device with INDIDUINO.">
+  <PageHead title="Arduino" crumbs={[{ name: "Develop", href: "/develop.html" }]}>
+    <p class="lede">INDIDUINO turns an Arduino board into an INDI device, by <a href="/about/contributors/13-nacho-mas.html">Nacho Mas</a>. Start with the introduction, then pick an example.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <div class="plist cols">
+      {pages.map((p) => <a href={pageUrl(p)}><b>{p.data.title}</b><span class="s">{p.data.description}</span></a>)}
+    </div>
+  </div>
+</Base>

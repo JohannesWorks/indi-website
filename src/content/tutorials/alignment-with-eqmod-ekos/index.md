@@ -3,6 +3,7 @@ title: "Alignment with EQMod and Ekos"
 description: "Align your mount with plate solving instead of two or three star alignment."
 topic: ekos
 author: "Jasem Mutlaq"
+cover: "./ekos_setup.png"
 legacyUrl: "/support/tutorials/137-alignment-with-eqmod-ekos.html"
 legacyId: 137
 ---
@@ -17,7 +18,7 @@ So What do you need in order to achieve sub-arcseconds GOTOs?
 -   Mount that supports EQMod.
 -   CCD.
 
-[](/images/ekos/ekos_setup.png)
+![Ekos Setup](./ekos_setup.png)
 
 My personal setup is HEQ5 mount, QSI583wsg CCD, and I have Starlight Xpress Lodestar, but I use that for guiding only.
 
@@ -36,7 +37,7 @@ Point your mount toward Polaris, if you're the northern hemisphere, and attach y
 
 Start KStars, select Ekos from the Tools menu. Next, select the telescope driver as EQMod, and select your CCD from the drop-down list. Click Start INDI, and then Connect.
 
-[](/images/ekos/ekos_track.png)
+![EQMod Tracking](./ekos_track.webp)
 
 In KStars SkyMap, you will see the EQMod cross-hair close to Polaris. Go to Ekos alignment tab, and make sure **_Update Coordinates After Slew_** checkbox is checked, and under GOTO, select _**Slew to Target**_. This option instructs Ekos that once a solution is found, it slews the mount to the target coordinates.
 
@@ -44,7 +45,7 @@ Now, select a nearby star, right click, select EQMod, and then Track. Your mount
 
 By default, EQMod driver uses N-Star alignment to build a pointing model. Each time your perform a sync, a new point is added to the model. You don't have to do anything, this is done transparently for you. In practice when performing astrophotography, I run the _**Capture & Solve**_ command after every slew, just to make sure I am really dead-center on my target. The solver typically takes 2-3 seconds to solve the image at this stage.
 
-[](/images/ekos/ekos_align.png)
+![Ekos Alignment](./ekos_align.png)
 
 After you are done with your observation/astrophotography session, make sure to save the model in the Align tab of the EQMod driver, which can be found in the INDI Control Panel so that it gets loaded on subsequent observation sessions.
 

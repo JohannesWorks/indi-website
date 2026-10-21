@@ -190,4 +190,4 @@ print "Shutting down INDI server..."
 iface.stop("7624")
 ```
 
-That's a very basic tutorial illustrating the capabilities of DBUS scripting with Python in KStars. If you have any questions or suggestions or scripts you'd like to share, please let us know in INDI [forums](/forum.html)!
+That's a very basic tutorial illustrating the capabilities of DBUS scripting with Python in KStars. If you have any questions or suggestions or scripts you'd like to share, please let us know in INDI [forums](https://forum.indilib.org)!

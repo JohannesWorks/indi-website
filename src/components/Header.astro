@@ -1,14 +1,15 @@
 ---
 // Site header. The menu item for the current section is marked as the current page.
 const LINKS = [
-  ["About", "/#how"],
-  ["Devices", "/#devices"],
+  ["About", "/about.html"],
   ["Tutorials", "/tutorials.html"],
-  ["Download", "/#install"],
-  ["Support", "/#community"],
+  ["Develop", "/develop.html"],
+  ["Download", "/download.html"],
+  ["Support", "/support.html"],
 ];
+// The section of the current page: /about/ekos/setup.html is in "/about"
 const path = Astro.url.pathname;
-const section = path.startsWith("/tutorials") ? "/tutorials" : "";
+const section = "/" + (path.split("/")[1] ?? "").replace(/\.html$/, "");
 ---
 <header class="top">
   <div class="wrap">
@@ -18,11 +19,12 @@ const section = path.startsWith("/tutorials") ? "/tutorials" : "";
     </a>
     <nav class="main" id="nav" aria-label="Main">
       {LINKS.map(([label, href]) => (
-        <a href={href} aria-current={section && href.startsWith(section) ? "page" : undefined}>{label}</a>
+        <a href={href} aria-current={section !== "/" && href === `${section}.html` ? "page" : undefined}>{label}</a>
       ))}
+      <a class="ext" href="https://drivers.indilib.org">Drivers</a>
       <a class="ext" href="https://forum.indilib.org">Forum</a>
     </nav>
-    <a class="btn primary small head-cta" href="/#install">Get INDI</a>
+    <a class="btn primary small head-cta" href="/download.html">Get INDI</a>
     <button class="icon-btn" id="burger" type="button" aria-expanded="false" aria-controls="nav" title="Menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>

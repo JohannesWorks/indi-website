@@ -1,0 +1,17 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { childrenOf, pageUrl } from "../../data/pages";
+import "../../styles/pages.css";
+const chapters = await childrenOf("develop/developer-manual");
+---
+<Base title="Developer manual" description="The INDI developer manual: the protocol, the server, and how to build drivers.">
+  <PageHead title="Developer manual" crumbs={[{ name: "Develop", href: "/develop.html" }]}>
+    <p class="lede">How INDI works and how to write drivers for it, in reading order. For newer material, see the <a href="https://docs.indilib.org">technical documentation</a> and the <a href="/api/index.html">API reference</a>.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <ol class="plist" style="list-style:none;padding:0;margin:0">
+      {chapters.map((c, i) => <li><a href={pageUrl(c)}><span class="n">{i + 1}</span><b>{c.data.title}</b><span class="s">{c.data.description}</span></a></li>)}
+    </ol>
+  </div>
+</Base>

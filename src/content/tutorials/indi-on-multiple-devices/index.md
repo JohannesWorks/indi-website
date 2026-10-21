@@ -3,11 +3,12 @@ title: "INDI on multiple devices"
 description: "Spread drivers across several computers and control them as one."
 topic: remote
 author: "Jasem Mutlaq"
+cover: "./chained_indi.webp"
 legacyUrl: "/support/tutorials/159-indi-on-multiple-devices.html"
 legacyId: 159
 ---
 
-[](/images/ekos/chained_indi.png)
+![INDI on multiple devices](./chained_indi.webp)
 
 INDI is by design a distributed control protocol where multiple INDI servers may span different hosts and on different network topologies. This enables an N to N communication between front end clients and backend servers. When operating a local or remote observatory, it might be necessary to run INDI servers on multiple devices. If you are using Ekos as your client of choice, then it is necessary that all remote INDI servers are _chained_, that is, they should all be linked together as to appear at **one** INDI server to Ekos.
 
@@ -85,11 +86,11 @@ This will start INDI server on **starpi** and _chain_ it to the INDI server runn
 
 In Ekos Setup, select **Remote** mode and then select all your devices as illustrated below.
 
-[](/images/ekos/chained_ekos_setup.png)
+![INDI on multiple devices](./chained_ekos_setup.png)
 
 Next, open Ekos options and change the host to **starpi** and port to **7624**. Now you're good to go! Simple click _Start INDI_ and it will connect to to the remove devices. You should see all the devices popping up in INDI control panel.
 
-[](/images/ekos/chained_ekos_options.png)
+![Ekos Options](./chained_ekos_options.png)
 
 Next simply click **Connect** in Ekos Setup and all your device should come online so you can start using Ekos right away!
 

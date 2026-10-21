@@ -3,13 +3,14 @@ title: "Painless remote control with Ekos and INDI"
 description: "Run INDI on a small computer at the telescope and control it from Ekos indoors."
 topic: remote
 author: "Jasem Mutlaq"
+cover: "./ekos_indi_rpi.webp"
 legacyUrl: "/support/tutorials/150-painless-remote-control-with-ekos-indi.html"
 legacyId: 150
 ---
 
 ##  Getting Started
 
-[](/images/ekos/rpi/ekos_indi_rpi.png)
+![Wireless Control with INDI/Ekos](./ekos_indi_rpi.webp)
 
 As more Single-Board-Computers such as the [Raspberry PI](http://www.raspberrypi.org/), [ODroid](http://www.hardkernel.com/main/main.php), [Beaglebone](http://beagleboard.org/)..etc become more powerful with every release, they become closer to replacing the traditional desktop PC for trivial non-graphic intensive tasks. One of the nuisances of astrophotography is the necessity to be in close proximity to your equipment during the typical astrophotography workflow. Your telescope, CCD, focuser..etc are usually connected to a desktop or laptop running your favorite astrophotography software. In addition to freezing temperatures you might encountered in your neck of the wood in winter, it is often far more convenient to operate everything remotely from the comfort of your living room, and it's even better if it's done wirelessly.
 
@@ -19,7 +20,7 @@ To get started, please check the following steps:
 
 1.  **Verify Your Devices Are Supported**
 
-Ensure that your device is supported under INDI. We strive to make more devices supported under Linux, please check the [INDI Devices page](/devices.html) to find out if you device is supported.
+Ensure that your device is supported under INDI. We strive to make more devices supported under Linux, please check the [INDI Devices page](https://drivers.indilib.org) to find out if you device is supported.
 
 3.  **Desktop/Laptop PC**
 
@@ -39,7 +40,7 @@ That's it! After all dependencies are installed, you will find KStars in the sta
 
 **Option 2: Windows/OSX**
 
-You will need to install [Ekos VM](/download/download/5-vm/7-ekos-vm.html) on [VirtualBox](https://www.virtualbox.org/). VirtualBox is available for free for Windows and OSX. Ekos VM comes ready with latest Ekos and INDI out of the box!
+You will need to install [Ekos VM](/download.html) on [VirtualBox](https://www.virtualbox.org/). VirtualBox is available for free for Windows and OSX. Ekos VM comes ready with latest Ekos and INDI out of the box!
 
 11.  **Single Board Computers**
 
@@ -51,7 +52,7 @@ You might need a powered USB hub to connect all your equipment first (including 
 
 You need to run INDI server with the drivers necessary to control your equipment. An INDI driver is an executable file stored under /usr/bin and is prefixed with indi\_. In the device page, you will find the _Driver Name_ and the _Driver Executable_ for each device. For example, the executable for EQMod Mount driver is indi_eqmod_telescope. The **Driver Name** is EQMod Mount and the **Driver Executable** is indi_eqmod_telescope.
 
-[](/images/ekos/rpi/indi_site_devices.png)
+![Device details](./indi_site_devices.webp)
 
 To better illustrate this, let us take an example. Suppose you have EQMod, QHY CCD (QHY9 as main CCD, and QHY5 as guider), Baader SteelDrive focuser, and you'd also like the use the joystick to control your mount. In this case, you'd run INDI server on RPi as following:
 
@@ -60,25 +61,25 @@ To better illustrate this, let us take an example. Suppose you have EQMod, QHY C
 indiserver -v indi_eqmod_telescope indi_qhy_ccd indi_steeldrive_focus indi_joystick
 ```
 
-[](/images/ekos/rpi/indi_on_rpi.png)
+![INDI server on RPi](./indi_on_rpi.png)
 
 As you can see above, we pass the driver executables to INDI server and it runs them. The default INDI server port is 7624.
 
 Now that INDI server is running, it is waiting for INDI clients such as Ekos to connect to it. Fire up KStars on your laptop/desktop, go to Tools menu, and select Ekos. Click the **Options** button and select Ekos icon from left side pane. Set the INDI server host and port. When setting up RPi for the first time, it is recommended to set a static IP address. Enter the RPi IP address and port of INDI server which should be 7624 unless you changed it to something else. If your device is not listed in the combo boxes, you can enter the device name in Ekos options and it will be added.
 
-[](/images/ekos/rpi/ekos_options_remote_names.png)
+![Ekos Options](./ekos_options_remote_names.png)
 
 Next, select the devices from the combo boxes. Click **Start** to connect to the remote INDI server instance. If all goes OK, you will see INDI Control Panel with the devices occupying a tab each.
 
-[](/images/ekos/rpi/ekos_remote_mode.png)
+![Ekos Mode](./ekos_remote_mode.png)
 
 In INDI Control Panel, you can change settings such as which port to connect to for your telescope...etc.
 
-[](/images/ekos/rpi/ekos_indi_control_panel.png)
+![INDI Control Panel](./ekos_indi_control_panel.png)
 
 After you make the necessary changes, if any, click the **Connect** button to connect to your devices. If connection is established, Ekos is ready to be used!
 
-[](/images/ekos/rpi/ekos_online.png)
+![Ekos Online](./ekos_online.webp)
 
 Congratulations! You made it this far! If you encounter any issues, please report it in the [forums](/forum) and we will try to help you get them resolved!
 

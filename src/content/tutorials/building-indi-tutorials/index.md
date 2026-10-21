@@ -4,7 +4,7 @@ description: "Build the example drivers and clients that ship with INDI."
 topic: dev
 author: "Jasem Mutlaq"
 date: 2018-07-31
-cover: "./kstars_dm_part1_thumb.jpg"
+cover: "./kstars_dm_part1.png"
 legacyUrl: "/develop/tutorials/184-building-indi-tutorials.html"
 legacyId: 184
 ---
@@ -37,19 +37,19 @@ This will create an INDI server running tutorial one driver on port 7624 (by def
 
 1.  Select the _Device Manager_ menu item from the _Tools_ menu
 
-    [![](./kstars_dm_part1_thumb.jpg)](/images/kstars/kstars_dm_part1.png)
+    ![Device Manager](./kstars_dm_part1.png)
 
 2.  Select the client tab and add a new host
 
-    [![](./kstars_dm_part2_thumb.jpg)](/images/kstars/kstars_dm_part2.png)
+    ![Add a new host](./kstars_dm_part2.png)
 
 3.  Click _Connect_ in the device manager to connect to INDI server running Tutorial One
 
-    [![](./kstars_dm_part3_thumb.jpg)](/images/kstars/kstars_dm_part3.png)
+    ![Connect to INDI server](./kstars_dm_part3.png)
 
 4.  Client Connect/Disconnect to test tutorial one simple functionality in INDI Control Panel
 
-    [![](./kstars_dm_part4_thumb.jpg)](/images/kstars/kstars_dm_part4.png)
+    ![Use Simple Device driver](./kstars_dm_part4.png)
 
 The INDI Library tutorials cover some of the basic aspects of INDI, namely:
 

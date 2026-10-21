@@ -2,6 +2,7 @@
 title: "DIY remote focuser with INDI"
 description: "Build a low-cost motorized focuser that works with INDI."
 topic: diy
+cover: "./diy_focuser_architecture.png"
 legacyUrl: "/support/tutorials/143-diy-remote-focuser-with-indi.html"
 legacyId: 143
 ---
@@ -38,10 +39,8 @@ No problem here, I decided, I would create my own software driver based on the e
 
 How did I put all of this together? I actually created two solutions, one direct wired via USB and one wireless solution:
 
-[](/images/tutorials/diy_focuser_architecture.png)
+![DYI Focuser Solutions](./diy_focuser_architecture.png)
 
 My solution utilizes an Arduino UNO board with a simple wiring diagram to interface directly to 2 servos. It’s really quite simple, and should work with any Arduino board that can drive a servo. In my ‘direct connect’ solution which was used for testing, I connect directly to the Arduino board using a USB cable and a local indiserver instance running on the same Linux based PC as the INDI client. For deployment, I installed the INDI platform and INDI server to a Raspberry PI Rev2 and use an 802.1n USB dongle to provide remote/wireless capability to allow remote access from anywhere on my local network. First, a little bit about servos. I used ‘standard’ servos which are of a size and shape similar to those seen on hobby RC airplanes. There, the similarity ends, as RC controlled airplanes use limited travel angle servos. Their control protocols are very much different from continuous rotation servos and are not suitable for this application.
 
 NOTE: This solution and software driver absolutely will not work with limited travel angle servos without necessary changes to the driver (and maybe not even then). The servos used for this solution must be ‘continuous rotation’. They’re available for around $9.00 USD or maybe less from vendors such as Parallax or Futaba etc.
-
--   [Next](/support/tutorials/143-diy-remote-focuser-with-indi.html?start=1 "Design Considerations")

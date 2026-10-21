@@ -130,3 +130,4 @@
 .donate p { color: rgba(255, 255, 255, 0.9); }
 .donate svg { background: rgba(255, 255, 255, 0.2); stroke: #fff; }
 
+.topics li.loading { display: block; color: var(--muted); font-size: 0.95rem; }

@@ -30,4 +30,33 @@ const tutorials = defineCollection({
     }),
 });
 
-export const collections = { tutorials };
+// Every other page of the site: about, Ekos, news, developer manual, Arduino, support, contributors
+// and downloads. The folder path is the URL: src/content/pages/about/features/index.md is
+// /about/features.html, so old indilib.org links keep working.
+const pages = defineCollection({
+  loader: glob({
+    pattern: "**/index.md",
+    base: "./src/content/pages",
+    generateId: ({ entry }) => entry.replace(/\/index\.md$/, ""),
+  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      // News posts: publish date and author
+      date: z.coerce.date().optional(),
+      author: z.string().optional(),
+      // Position in its list (developer manual chapters, Ekos modules, contributors)
+      order: z.number().optional(),
+      // Joomla article number, used to sort news
+      legacyId: z.number().optional(),
+      // Contributors
+      role: z.string().optional(),
+      website: z.string().optional(),
+      photo: image().optional(),
+      // Download pages
+      system: z.string().optional(),
+    }),
+});
+
+export const collections = { tutorials, pages };

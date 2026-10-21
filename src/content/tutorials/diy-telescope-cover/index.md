@@ -45,23 +45,23 @@ So what do we need to do that?
 
 This first picture is a view from the back where you can see the U shaped feet bracket and the box that holds the servo. As the servo and control arm is mounted on the side ot the box, the feet are mounted in an angle to keep the servo bracket straight, and off center relative to the dust cover. Everything is held in place on the scope by zip ties. With the electrical tape on the feet, it will not slide up or down on the scope by accident.
 
-[![Off centre monting](./off-centre-mounting-rear.jpg)](https://github.com/magnue/indi_servoblaster_cap/blob/master/doc/off-centre-mounting-rear.JPG)
+![Off centre monting](./off-centre-mounting-rear.jpg)
 
 -   ### Linking servo and control arm.
 
 In the fully closed position you can see the servo is pushing the cover closed. On the prototype, the servo horn is slightly to short. If it was longer the link would be pushing on the servo with a steeper angle, making it have less slack. At the moment the cover is closed very gently against the scope, and I would like it to sit tighter. A longer servo horn will fix that.
 
-[![Servo view, closed](./cap-closed-servoview.jpg)](https://github.com/magnue/indi_servoblaster_cap/blob/master/doc/cap-closed-servoview.JPG)
+![Servo view, closed](./cap-closed-servoview.jpg)
 
 In the fully opened position the cap clears the light-path of the scope, but with the short servo horn the cover is only opened to about ~105-110 degrees. With a longer servo horn it would open wider only limited by the geometry between the servo and the control arm.
 
-[![Servo view, open](./cap-open-servoview.jpg)](https://github.com/magnue/indi_servoblaster_cap/blob/master/doc/cap-open-servoview.JPG)
+![Servo view, open](./cap-open-servoview.jpg)
 
 -   ### Connecting the control arm to the dust cover.
 
 Preferably you can use one solid peace. It must be a 90 degree angle to connect to the control arm, and to the cover. I had no small angled piece lying around, so I used a small hinge. After dunking it in quick dry super glue, it will stay at an 90 degree angle. It's also worth noticing that between the angle piece and the second screw connecting the piece to the cover, there are some spacers to help the cover close flat on the scope. When the longer servo horn is installed it might not be needed, but will not do any harm.
 
-[![Control arm to cover connection](./90deg-pivot-closed.jpg)](https://github.com/magnue/indi_servoblaster_cap/blob/master/doc/90deg-pivot-closed.JPG)
+![Control arm to cover connection](./90deg-pivot-closed.jpg)
 
 -   ### Calibrating the servo.
 
@@ -75,6 +75,4 @@ This is explained shortly earlier in this article. The calibration consists of t
 -   Worth noting that the servo will move in "steps". There are no way of slowing down a servo other than to supply low voltage, so the total travel is calculated in to steps to slow it down. Not good to be slamming shut the dust cover! This does mean that the servo will catch up to the intended position before moving on, making the motion seam 'notchy'. This will not harm the servo.
 -   Hope you enjoy your low priced, automated dust cap :)
 
-[![Cap Un-parked](./cap-open-full-front.jpg)](https://github.com/magnue/indi_servoblaster_cap/blob/master/doc/cap-open-full-front.JPG)[![Cap Parked](./cap-closed-full.jpg)](https://github.com/magnue/indi_servoblaster_cap/blob/master/doc/cap-closed-full.JPG)
-
--   [Next](/support/tutorials/165-diy-auto-indi-telescope-cover.html?start=1 "ServoCap INDI Driver")
+![Cap Un-parked](./cap-open-full-front.jpg)![Cap Parked](./cap-closed-full.jpg)

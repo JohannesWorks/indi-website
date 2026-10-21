@@ -4,6 +4,7 @@ description: "Write the most basic INDI driver: a device that only connects and 
 topic: dev
 author: "Jasem Mutlaq"
 date: 2012-11-10
+cover: "./indi_simple_device.png"
 legacyUrl: "/develop/tutorials/94-simple-device-tutorial.html"
 legacyId: 94
 ---
@@ -30,7 +31,7 @@ protected:
 };
 ```
 
-[](/images/indi/indi_simple_device.png)
+![Simple Device](./indi_simple_device.png)
 
 Above, we declared a SimpleDevice class and inherited from INDI::DefaultDevice. We declared two functions that are called by the INDI framework when a client wants to Connect to or Disconnect from the device. The last function is called by INDI framework to find out the default name of the device, which may change at run time if necessary.
 

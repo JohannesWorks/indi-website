@@ -18,7 +18,7 @@ If you run Ubuntu or Debian just install the packages with:
 sudo apt-get install indi-full swig libcfitsio-dev libnova-dev
 ```
 
-If you use a Raspberry PI, just install [INDI Library for Raspberry PI](/download/category/6-raspberry-pi.html) instead of indi-full.
+If you use a Raspberry PI, just install [INDI Library for Raspberry PI](/download/raspberry-pi.html) instead of indi-full.
 
 For Python2 support install Python2 headers and pip:
 

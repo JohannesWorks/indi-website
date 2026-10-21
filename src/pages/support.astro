@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import HubCard from "../components/HubCard.astro";
+import "../styles/pages.css";
+---
+<Base title="Support" description="Help with INDI: FAQ, forum, tutorials, log submission and bug reports.">
+  <PageHead title="Support">
+    <p class="lede">Have a question or a problem with INDI? Check the FAQ, or ask on the forum so other INDI users can help. If you found a bug, report it on GitHub with your logs.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <div class="hub-grid">
+      <HubCard href="/support/faq.html" icon="question" title="FAQ" text="Answers to the most common setup and connection questions." />
+      <HubCard href="https://forum.indilib.org" icon="chat" title="Forum" text="Ask the community at forum.indilib.org." />
+      <HubCard href="/tutorials.html" icon="tutorial" title="Tutorials" text="Step-by-step guides for setup, imaging and remote control." />
+      <HubCard href="/support/logs-submission.html" icon="log" title="Submit logs" text="How to collect KStars and INDI logs for a support question." />
+      <HubCard href="https://github.com/indilib/indi/issues" icon="bug" title="Report a bug" text="Open an issue on GitHub. Attach your logs." />
+      <HubCard href="/support/gallery.html" icon="image" title="Gallery" text="Images and setups from the INDI community." />
+      <HubCard href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HBWELZ79SSSC6&source=url" icon="heart" title="Support INDI" text="INDI is built by volunteers. Donations keep the project running." />
+    </div>
+  </div>
+</Base>

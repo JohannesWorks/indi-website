@@ -1,0 +1,137 @@
+---
+// Every page of the "pages" collection, at its old indilib.org URL, plus redirect pages for
+// old URLs that moved (src/data/redirects.json and the tutorials' legacyUrl).
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import ArticleEnhance from "../components/ArticleEnhance.astro";
+import { crumbs, parentOf, SECTION_NAMES } from "../data/sections";
+import { childrenOf, pageUrl, type Page } from "../data/pages";
+import redirects from "../data/redirects.json";
+import "../styles/tutorials.css";
+import "../styles/pages.css";
+
+export async function getStaticPaths() {
+  const pages = await getCollection("pages");
+  const pagePaths = await Promise.all(pages.map(async (page) => {
+    const parent = parentOf(page.id);
+    const siblings = SECTION_NAMES[parent] ? await childrenOf(parent) : [];
+    const i = siblings.findIndex((s) => s.id === page.id);
+    return { params: { path: page.id }, props: { kind: "page" as const, page, siblings, prev: siblings[i - 1], next: siblings[i + 1] } };
+  }));
+
+  const map = new Map<string, string>(Object.entries(redirects as Record<string, string>));
+  for (const t of await getCollection("tutorials")) if (t.data.legacyUrl) map.set(t.data.legacyUrl, `/tutorials/${t.id}.html`);
+  const taken = new Set(pages.map((p) => p.id));
+  const redirectPaths = [...map]
+    .filter(([from]) => from.endsWith(".html"))
+    .map(([from, to]) => ({ from: from.replace(/^\//, "").replace(/\.html$/, ""), to }))
+    .filter(({ from }) => !taken.has(from))
+    .map(({ from, to }) => ({ params: { path: from }, props: { kind: "redirect" as const, to } }));
+
+  return [...pagePaths, ...redirectPaths];
+}
+
+type Props =
+  | { kind: "page"; page: Page; siblings: Page[]; prev?: Page; next?: Page }
+  | { kind: "redirect"; to: string };
+const props = Astro.props as Props;
+
+let page: Page | undefined, siblings: Page[] = [], prev: Page | undefined, next: Page | undefined;
+let Content: any = null, toc: { slug: string; text: string }[] = [];
+if (props.kind === "page") {
+  ({ page, siblings, prev, next } = props);
+  const r = await render(page);
+  Content = r.Content;
+  toc = r.headings.filter((h) => h.depth === 2);
+}
+const id = page?.id ?? "";
+const parent = parentOf(id);
+const isNews = parent === "about/news";
+const isPerson = parent === "about/contributors";
+const isDownload = parent === "download";
+const date = page?.data.date?.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const editUrl = `https://github.com/indilib/indi-website/edit/main/src/content/pages/${id}/index.md`;
+const target = props.kind === "redirect" ? new URL(props.to, Astro.site).href : "";
+---
+{props.kind === "redirect" ? (
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <title>Moved</title>
+      <meta http-equiv="refresh" content={`0; url=${props.to}`} />
+      <link rel="canonical" href={target} />
+      <meta name="robots" content="noindex" />
+    </head>
+    <body><p>This page has moved to <a href={props.to}>{target}</a>.</p></body>
+  </html>
+) : page && (
+  <Base title={page.data.title} description={page.data.description}>
+    <div class="wrap a-head">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        {crumbs(id).map((c) => <span><a href={c.href}>{c.name}</a></span>)}
+      </nav>
+      {isPerson ? (
+        <div class="person-head">
+          {page.data.photo && <Image src={page.data.photo} alt="" width={240} class="person-photo" />}
+          <div>
+            <h1>{page.data.title}</h1>
+            {page.data.role && <p class="lede">{page.data.role}</p>}
+            {page.data.website && <p class="a-meta"><a href={page.data.website}>{page.data.website.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}</a></p>}
+          </div>
+        </div>
+      ) : (
+        <>
+          <h1>{page.data.title}</h1>
+          {page.data.description && !isDownload && <p class="lede">{page.data.description}</p>}
+          {(date || page.data.author) && (
+            <div class="a-meta">
+              {page.data.author && <span class="by"><i>{page.data.author.charAt(0)}</i>{page.data.author}</span>}
+              {date && <span>{date}</span>}
+            </div>
+          )}
+        </>
+      )}
+      {isDownload && (
+        <nav class="systems" aria-label="Other systems">
+          {siblings.map((s) => <a href={pageUrl(s)} aria-current={s.id === id ? "page" : undefined}>{s.data.system}</a>)}
+        </nav>
+      )}
+    </div>
+
+    <div class="wrap a-grid">
+      <article class="prose">
+        <Content />
+        <div class="a-end">
+          {(prev || next) && (
+            <nav class="pager" aria-label={`More in ${SECTION_NAMES[parent]}`}>
+              {prev ? <a href={pageUrl(prev)}><small>← {isNews ? "Newer" : "Previous"}</small>{prev.data.title}</a> : <span></span>}
+              {next && <a href={pageUrl(next)}><small>{isNews ? "Older" : "Next"} →</small>{next.data.title}</a>}
+            </nav>
+          )}
+          <p class="edit"><span>Found a mistake? This page is a Markdown file.</span><a href={editUrl}>Edit this page on GitHub</a></p>
+        </div>
+      </article>
+
+      <aside class="aside">
+        {toc.length > 1 && (
+          <details class="toc" id="toc" open>
+            <summary>On this page</summary>
+            <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+          </details>
+        )}
+        {siblings.length > 1 && !isDownload && (
+          <div class="side-box">
+            <h4>{SECTION_NAMES[parent]}</h4>
+            <ul class="in-section">
+              {siblings.slice(0, isNews ? 8 : 40).map((s) => <li><a href={pageUrl(s)} aria-current={s.id === id ? "page" : undefined}>{s.data.title}</a></li>)}
+            </ul>
+            {isNews && <a class="more" href="/about/news.html">All news</a>}
+          </div>
+        )}
+      </aside>
+    </div>
+    <ArticleEnhance />
+  </Base>
+)}

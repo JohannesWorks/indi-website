@@ -3,11 +3,12 @@ title: "Securing remote observatories"
 description: "Keep a remote observatory safe when the network connection drops."
 topic: remote
 author: "Jasem Mutlaq"
+cover: "./watchdog.png"
 legacyUrl: "/support/tutorials/154-securing-remote-observatories.html"
 legacyId: 154
 ---
 
-[](/images/tutorials/watchdog.png)
+![INDI WatchDog Driver](./watchdog.png)
 
 When operating a remote observatory, complete control of the devices rest with the remote INDI servers and drivers. In case of a communication loss, the observatory should be capable of performing a _graceful_ shutdown until communication is established again by the client.
 

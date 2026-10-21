@@ -48,6 +48,12 @@ section { padding-block: clamp(56px, 8vw, 100px); }
 .more { font-weight: 600; text-decoration: none; white-space: nowrap; }
 .more::after { content: " →"; }
 
+/* breadcrumbs */
+.crumbs { display: flex; flex-wrap: wrap; gap: 6px; font: 0.8rem/1.4 var(--mono); color: var(--muted); }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--link); }
+.crumbs span::before { content: "/"; margin-right: 6px; opacity: 0.5; }
+
 /* header */
 header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: rgba(29, 29, 29, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 header.top .wrap { display: flex; align-items: center; gap: 24px; padding-block: 12px; position: relative; }
@@ -58,6 +64,7 @@ header.top .wrap { display: flex; align-items: center; gap: 24px; padding-block:
 nav.main { display: flex; gap: 2px; margin-left: auto; }
 nav.main a { color: var(--ink); text-decoration: none; font-weight: 500; font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; }
 nav.main a:hover { color: #fff; background: var(--band); }
+nav.main a[aria-current="page"] { color: #fff; background: var(--band); }
 nav.main a.ext::after { content: "↗"; font-size: 0.8em; margin-left: 3px; color: var(--muted); }
 .btn { display: inline-flex; align-items: center; gap: 8px; font: 600 0.95rem/1 var(--body); padding: 13px 20px; border-radius: 10px; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
 .btn.primary { background: var(--blue); color: #fff; }

@@ -1,0 +1,24 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { childrenOf, pageUrl } from "../../data/pages";
+import { Content as Intro } from "../../data/intros/ekos.md";
+import "../../styles/tutorials.css";
+import "../../styles/pages.css";
+const modules = await childrenOf("about/ekos");
+---
+<Base title="Ekos" description="Ekos is the observatory control and astrophotography suite in KStars, built on INDI.">
+  <PageHead title="Ekos" crumbs={[{ name: "About", href: "/about.html" }]}>
+    <p class="lede">The observatory control and astrophotography suite in KStars, built on INDI.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <section>
+      <h2>Guides</h2>
+      <div class="plist cols">
+        {modules.map((m) => <a href={pageUrl(m)}><b>{m.data.title}</b><span class="s">{m.data.description}</span></a>)}
+        <a href="/develop/video-tutorials.html"><b>Video tutorials</b><span class="s">Watch Ekos and INDI in action.</span></a>
+      </div>
+    </section>
+    <section class="prose"><Intro /></section>
+  </div>
+</Base>

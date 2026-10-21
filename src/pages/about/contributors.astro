@@ -1,0 +1,24 @@
+---
+import { Image } from "astro:assets";
+import Base from "../../layouts/Base.astro";
+import PageHead from "../../components/PageHead.astro";
+import { childrenOf, pageUrl } from "../../data/pages";
+import "../../styles/pages.css";
+const people = await childrenOf("about/contributors");
+---
+<Base title="Contributors" description="The people who built and maintain INDI.">
+  <PageHead title="Contributors" crumbs={[{ name: "About", href: "/about.html" }]}>
+    <p class="lede">INDI is built by volunteers. These are some of the people behind it. Everyone who has contributed code is listed on <a href="https://github.com/indilib/indi/graphs/contributors">GitHub</a>.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <div class="people">
+      {people.map((p) => (
+        <a class="person" href={pageUrl(p)}>
+          {p.data.photo ? <Image src={p.data.photo} alt="" width={144} /> : <span class="ph">{p.data.title.charAt(0)}</span>}
+          <b>{p.data.title}</b>
+          <span>{p.data.role}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>

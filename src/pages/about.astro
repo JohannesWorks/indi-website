@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import HubCard from "../components/HubCard.astro";
+import "../styles/pages.css";
+---
+<Base title="About" description="INDI Library is open source software for automation and control of astronomical instruments.">
+  <PageHead title="About INDI">
+    <p class="lede">The INDI Library is the main implementation of the INDI protocol: a cross-platform package for automation and control of astronomical instruments. It supports mounts, cameras (CCD, CMOS, DSLR), focusers, domes, filter wheels and more, and can support virtually any device.</p>
+    <p class="lede">INDI is small, flexible and scalable. It runs on headless systems, phones, tablets, computers and servers, with native remote control, data acquisition and monitoring. It is released under the LGPL v2 license and is used in professional and amateur observatories around the world. An international team of volunteers maintains and develops it.</p>
+  </PageHead>
+  <div class="wrap p-body">
+    <div class="hub-grid">
+      <HubCard href="/about/features.html" icon="star" title="Features" text="What INDI offers: open source, cross platform, client agnostic and distributed." />
+      <HubCard href="/about/discover-indi.html" icon="compass" title="Discover INDI" text="How the INDI Library, server, drivers and clients fit together." />
+      <HubCard href="/about/ekos.html" icon="target" title="Ekos" text="The astrophotography suite in KStars, built on INDI." />
+      <HubCard href="/about/clients.html" icon="apps" title="Clients" text="Programs that control your devices through INDI." />
+      <HubCard href="/about/contributors.html" icon="people" title="Contributors" text="The people who built and maintain INDI." />
+      <HubCard href="/about/news.html" icon="news" title="News" text="Releases and stories from the INDI project." />
+    </div>
+  </div>
+</Base>
