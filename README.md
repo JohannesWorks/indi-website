@@ -64,6 +64,16 @@ GitHub Actions copies the built site to the server with rsync, the same way as
 
 Secrets: `REMOTE_HOST`, `REMOTE_USER`, `REMOTE_PRIVATE_KEY`, `DEPLOY_PATH`, and `REMOTE_PORT` if SSH is not on port 22.
 The deploy uses `rsync --delete`: everything in `DEPLOY_PATH` that is not part of the site is removed.
+A check step refuses top-level folders such as `/`, `~` or `/var/www`.
+
+On the server the deploy key is limited with `rrsync` in `~/.ssh/authorized_keys`:
+
+```
+command="/usr/bin/rrsync -wo /home/indi/www/indilib.org",restrict ssh-ed25519 AAAA... github-actions-deploy-indilib.org
+```
+
+The key can only write into that folder, and `DEPLOY_PATH` is relative to it (`/` is the folder itself).
+The repository variable `DEPLOY_RRSYNC_ROOT` records this folder and lets the check accept `/`.
 
 ### Launch
 

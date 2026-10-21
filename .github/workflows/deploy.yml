@@ -45,11 +45,18 @@ jobs:
 
       # rsync --delete removes everything in the target that is not part of the site,
       # so refuse anything that looks like a top-level or home folder.
+      # Exception: when the server locks the deploy key to one folder with rrsync, paths are
+      # inside that folder ("/" is the folder itself). DEPLOY_RRSYNC_ROOT records that folder.
       - name: Check deploy folder
         if: github.event_name != 'pull_request'
         env:
           TARGET: ${{ secrets.DEPLOY_PATH }}
+          RRSYNC_ROOT: ${{ vars.DEPLOY_RRSYNC_ROOT }}
         run: |
+          if [ -n "$RRSYNC_ROOT" ]; then
+            echo "Server limits this key to $RRSYNC_ROOT with rrsync; deploying inside it."
+            exit 0
+          fi
           # Strip spaces and trailing slashes, then count the folder levels
           t="$(printf '%s' "$TARGET" | tr -d '[:space:]' | sed -E 's#/+$##')"
           rel="${t#\~/}"; rel="${rel#\~}"; rel="${rel#/}"
