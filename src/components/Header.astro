@@ -1,3 +1,15 @@
+---
+// Site header. The menu item for the current section is marked as the current page.
+const LINKS = [
+  ["About", "/#how"],
+  ["Devices", "/#devices"],
+  ["Tutorials", "/tutorials.html"],
+  ["Download", "/#install"],
+  ["Support", "/#community"],
+];
+const path = Astro.url.pathname;
+const section = path.startsWith("/tutorials") ? "/tutorials" : "";
+---
 <header class="top">
   <div class="wrap">
     <a class="brand" href="/" aria-label="INDI home">
@@ -5,11 +17,9 @@
       <span><b>INDI</b><small>Open Astronomy Instrumentation</small></span>
     </a>
     <nav class="main" id="nav" aria-label="Main">
-      <a href="/#how">About</a>
-      <a href="/#devices">Devices</a>
-      <a href="/#tutorials">Develop</a>
-      <a href="/#install">Download</a>
-      <a href="/#community">Support</a>
+      {LINKS.map(([label, href]) => (
+        <a href={href} aria-current={section && href.startsWith(section) ? "page" : undefined}>{label}</a>
+      ))}
       <a class="ext" href="https://forum.indilib.org">Forum</a>
     </nav>
     <a class="btn primary small head-cta" href="/#install">Get INDI</a>

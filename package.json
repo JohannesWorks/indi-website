@@ -10,6 +10,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "7.4.1"
+    "@astrojs/markdown-remark": "^7.3.3",
+    "astro": "7.4.1",
+    "remark-github-blockquote-alert": "^2.1.0"
   }
 }

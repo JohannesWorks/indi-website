@@ -182,7 +182,7 @@
   var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // particles: commands (orange) travel toward the equipment, status (blue) travels back
-  var pLayer = $("particles"), NS = "http://www.w3.org/2000/svg", parts = [];
+  var pLayer = document.getElementById("particles"), NS = "http://www.w3.org/2000/svg", parts = [];
   Object.keys(LINKS).forEach(function (id) {
     [[C.orange, true], [C.blue, false], [C.orange, true], [C.blue, false]].forEach(function (f, k) {
       var c = document.createElementNS(NS, "circle");

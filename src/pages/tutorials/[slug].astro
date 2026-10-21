@@ -1,0 +1,114 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { topicName } from "../../data/topics";
+import { sortedTutorials, minutes, tutorialUrl, type Tutorial } from "../../data/tutorials";
+import "../../styles/tutorials.css";
+
+export async function getStaticPaths() {
+  const all = await sortedTutorials();
+  return all.map((t, i) => ({
+    params: { slug: t.id },
+    props: { t, prev: all[i - 1], next: all[i + 1], related: all.filter((o) => o.data.topic === t.data.topic && o.id !== t.id).slice(0, 3) },
+  }));
+}
+
+interface Props { t: Tutorial; prev?: Tutorial; next?: Tutorial; related: Tutorial[] }
+const { t, prev, next, related } = Astro.props;
+const { Content, headings } = await render(t);
+const toc = headings.filter((h) => h.depth === 2);
+const editUrl = `https://github.com/indilib/indi-website/edit/main/src/content/tutorials/${t.id}/index.md`;
+// Show the cover on top only when the article doesn't already include that image
+const coverName = t.data.cover?.src.split("/").pop()!.split(/[.?]/)[0];
+const showCover = t.data.cover && !(t.body ?? "").includes(`./${coverName}.`);
+const date = t.data.date?.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+---
+<Base title={t.data.title} description={t.data.description}>
+  <div class="wrap a-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span><a href="/tutorials.html">Tutorials</a></span><span>{topicName(t.data.topic)}</span></nav>
+    <h1>{t.data.title}</h1>
+    <p class="lede">{t.data.description}</p>
+    <div class="a-meta">
+      <span class="by"><i>{(t.data.author ?? "I").charAt(0).toUpperCase()}</i>{t.data.author ?? "INDI community"}</span>
+      {date && <span>{date}</span>}
+      {t.data.video ? <span>Video</span> : <span>{minutes(t)} min read</span>}
+      {t.data.drivers?.map((d) => <span>Driver <code>{d}</code></span>)}
+      <a href={editUrl}>Edit on GitHub</a>
+    </div>
+  </div>
+  {showCover && t.data.cover && <div class="wrap"><Image class="cover" src={t.data.cover} alt="" width={1180} /></div>}
+
+  <div class="wrap a-grid">
+    <article class="prose">
+      <Content />
+
+      <div class="a-end">
+        <div class="ask"><div><b>Questions about this tutorial?</b><span>Ask on the forum. Someone who has done it will answer.</span></div><a class="btn primary small" href="https://forum.indilib.org">Ask on the forum</a></div>
+        <nav class="pager" aria-label="More tutorials">
+          {prev ? <a href={tutorialUrl(prev)}><small>← Previous</small>{prev.data.title}</a> : <span></span>}
+          {next && <a href={tutorialUrl(next)}><small>Next →</small>{next.data.title}</a>}
+        </nav>
+        <p class="edit"><span>Found a mistake? This page is a Markdown file.</span><a href={editUrl}>Edit this page on GitHub</a></p>
+      </div>
+    </article>
+
+    <aside class="aside">
+      {toc.length > 1 && (
+        <details class="toc" id="toc" open>
+          <summary>On this page</summary>
+          <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+        </details>
+      )}
+      {related.length > 0 && (
+        <div class="side-box">
+          <h4>More in {topicName(t.data.topic)}</h4>
+          <ul>{related.map((r) => <li><a href={tutorialUrl(r)}>{r.data.title}</a></li>)}</ul>
+        </div>
+      )}
+    </aside>
+  </div>
+</Base>
+
+<script>
+  // Code blocks: a header with the language and a Copy button
+  const LANG: Record<string, string> = { shell: "shell", sh: "shell", bash: "shell", ini: "ini", cpp: "C++", python: "Python", xml: "XML", text: "text", plaintext: "text" };
+  document.querySelectorAll<HTMLPreElement>(".prose pre.astro-code").forEach((pre) => {
+    const box = document.createElement("div");
+    box.className = "code";
+    const head = document.createElement("header");
+    const label = document.createElement("span");
+    const lang = pre.dataset.language ?? "text";
+    label.textContent = LANG[lang] ?? lang;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", () => {
+      const done = () => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy"), 1500); };
+      const select = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection()!; s.removeAllRanges(); s.addRange(r); btn.textContent = "Press Ctrl+C"; };
+      navigator.clipboard?.writeText(pre.innerText).then(done, select) ?? select();
+    });
+    head.append(label, btn);
+    pre.replaceWith(box);
+    box.append(head, pre);
+  });
+
+  // Table of contents: highlight the section in view; folds up on small screens
+  const toc = document.getElementById("toc") as HTMLDetailsElement | null;
+  if (toc) {
+    const links = [...toc.querySelectorAll("a")];
+    const heads = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))));
+    const spy = () => {
+      let cur = 0;
+      heads.forEach((h, i) => { if (h && h.getBoundingClientRect().top < 140) cur = i; });
+      links.forEach((a, i) => a.classList.toggle("on", i === cur));
+    };
+    addEventListener("scroll", spy, { passive: true });
+    spy();
+    const mq = matchMedia("(max-width: 1000px)");
+    const mode = () => { toc.open = !mq.matches; };
+    mq.addEventListener("change", mode);
+    mode();
+    toc.querySelector("summary")!.addEventListener("click", (e) => { if (!mq.matches) e.preventDefault(); });
+  }
+</script>

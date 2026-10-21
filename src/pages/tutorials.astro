@@ -1,0 +1,139 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import { TOPICS, topicName } from "../data/topics";
+import { sortedTutorials, latestTutorials, minutes, hasCode, tutorialUrl } from "../data/tutorials";
+import "../styles/tutorials.css";
+
+const all = await sortedTutorials();
+const latest = await latestTutorials(3);
+const byTopic = TOPICS.map((tp) => ({ ...tp, items: all.filter((t) => t.data.topic === tp.id) }));
+const url = (id: string) => `/tutorials/${id}.html`;
+---
+<Base title="Tutorials" description="Step-by-step guides for setting up, running and building on INDI, written by the community.">
+  <div class="wrap t-head">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>Tutorials</span></nav>
+    <h1>Tutorials</h1>
+    <p class="lede">Step-by-step guides for setting up, running and building on INDI. Written by the community, for the community.</p>
+    <div class="finder">
+      <label class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="q" type="search" placeholder="Search tutorials, for example Raspberry Pi or Python" aria-label="Search tutorials">
+      </label>
+      <div class="chips" id="chips" role="group" aria-label="Filter by topic">
+        <button class="chip" type="button" data-t="" aria-pressed="true">All <b>{all.length}</b></button>
+        {byTopic.map((tp) => (
+          <button class="chip" type="button" data-t={tp.id} aria-pressed="false">{tp.name} <b>{tp.items.length}</b></button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="intro-blocks">
+    <div class="start">
+      <p><b>New to INDI?</b><span>Start here, in this order.</span></p>
+      <a class="step" href="/#install"><i>1</i><b>Install INDI</b><span>Packages for Ubuntu, Raspberry Pi, Fedora, Arch and macOS.</span></a>
+      <a class="step" href={url("ekos-on-raspberry-pi")}><i>2</i><b>Ekos on Raspberry Pi</b><span>The complete beginner's guide to a Pi at the telescope.</span></a>
+      <a class="step" href={url("remote-control-with-ekos")}><i>3</i><b>Painless remote control</b><span>Control the Pi from Ekos on your laptop indoors.</span></a>
+    </div>
+
+    <div class="sec-head" style="margin: 56px 0 22px">
+      <p class="eyebrow">Latest</p><h2>New tutorials</h2>
+    </div>
+    <div class="latest">
+      {latest.map((t) => (
+        <a class="feat" href={tutorialUrl(t)}>
+          {t.data.cover && <Image src={t.data.cover} alt="" width={640} />}
+          <div>
+            <span class="tagline">{topicName(t.data.topic)} <span class="new">NEW</span></span>
+            <h3>{t.data.title}</h3>
+            <p>{t.data.description}</p>
+            <span class="meta"><span>{minutes(t)} min read</span>{hasCode(t) && <span class="code">Code</span>}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <div class="wrap" id="topics" style="margin-top: 40px">
+    {byTopic.map((tp) => (
+      <section class="topic" data-topic={tp.id}>
+        <div class="topic-head"><svg viewBox="0 0 24 24" set:html={tp.icon} /><h2>{tp.name}</h2><p>{tp.description}</p></div>
+        <div class="rows">
+          {tp.items.map((t) => (
+            <a class="row" href={tutorialUrl(t)} data-text={`${t.data.title} ${t.data.description} ${t.data.author ?? ""} ${(t.data.drivers ?? []).join(" ")}`.toLowerCase()}>
+              <h3>{t.data.title}</h3>
+              <p>{t.data.description}</p>
+              <span class="meta">
+                {t.data.video ? <span class="video">Video</span> : <span>{minutes(t)} min read</span>}
+                {hasCode(t) && <span class="code">Code</span>}
+                {t.data.author && <span>{t.data.author}</span>}
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+  <div class="wrap"><p class="empty" id="empty" hidden>No tutorials match your search. Try fewer words, or <a href="https://forum.indilib.org">ask in the forum</a>.</p></div>
+
+  <div class="wrap">
+    <div class="write">
+      <div>
+        <p class="eyebrow">Contribute</p>
+        <h2>Write a tutorial</h2>
+        <p>Tutorials are Markdown files in the website repository on GitHub. Add a folder with an <code>index.md</code> and your images, open a pull request, and it goes live when it's merged. The same way drivers are documented.</p>
+        <div class="cta"><a class="btn primary" href="https://github.com/indilib/indi-website/tree/main/src/content/tutorials">Open the tutorials folder</a><a class="btn ghost" href={url("indi-safety-monitor")}>See an example</a></div>
+      </div>
+      <pre><span class="c"># src/content/tutorials/my-tutorial/index.md</span>
+---
+<span class="k">title:</span> INDI Safety Monitor
+<span class="k">description:</span> Combine weather, power and cloud
+  sensors into one safety status.
+<span class="k">topic:</span> observatory
+<span class="k">author:</span> Pouya
+<span class="k">cover:</span> ./safety-monitor.webp
+<span class="k">drivers:</span> [indi_safetymonitor]
+---
+
+The INDI Safety Monitor is an auxiliary driver
+that keeps your observatory safe...</pre>
+    </div>
+  </div>
+</Base>
+
+<script>
+  // Search and topic filter, all in the browser
+  const chips = document.getElementById("chips")!;
+  const q = document.getElementById("q") as HTMLInputElement;
+  const intro = document.getElementById("intro-blocks")!;
+  const empty = document.getElementById("empty")!;
+  let active = "";
+
+  function filter() {
+    const words = q.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    let shown = 0;
+    document.querySelectorAll<HTMLElement>(".topic").forEach((sec) => {
+      const inTopic = !active || sec.dataset.topic === active;
+      let n = 0;
+      sec.querySelectorAll<HTMLElement>(".row").forEach((r) => {
+        const ok = inTopic && words.every((w) => r.dataset.text!.includes(w));
+        r.hidden = !ok;
+        if (ok) n++;
+      });
+      sec.hidden = n === 0;
+      shown += n;
+    });
+    intro.hidden = Boolean(active || words.length);
+    empty.hidden = shown > 0;
+  }
+
+  chips.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>(".chip");
+    if (!b) return;
+    active = b.dataset.t ?? "";
+    chips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+    filter();
+  });
+  q.addEventListener("input", filter);
+</script>
