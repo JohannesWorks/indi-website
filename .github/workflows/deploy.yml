@@ -1,0 +1,40 @@
+name: Build and deploy website
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+
+      # Deploys only from main, and only once the DEPLOY_PATH variable is set in the repo settings
+      - name: rsync deployment
+        if: github.event_name == 'push' && vars.DEPLOY_PATH != ''
+        uses: burnett01/rsync-deployments@7.1.0
+        with:
+          switches: -azv --delete
+          path: dist/
+          remote_path: ${{ vars.DEPLOY_PATH }}
+          remote_host: ${{ secrets.REMOTE_HOST }}
+          remote_user: ${{ secrets.REMOTE_USER }}
+          remote_key: ${{ secrets.REMOTE_PRIVATE_KEY }}

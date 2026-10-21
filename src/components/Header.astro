@@ -1,0 +1,27 @@
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="INDI home">
+      <img src="/img/logo.webp" alt="">
+      <span><b>INDI</b><small>Open Astronomy Instrumentation</small></span>
+    </a>
+    <nav class="main" id="nav" aria-label="Main">
+      <a href="/#how">About</a>
+      <a href="/#devices">Devices</a>
+      <a href="/#tutorials">Develop</a>
+      <a href="/#install">Download</a>
+      <a href="/#community">Support</a>
+      <a class="ext" href="https://forum.indilib.org">Forum</a>
+    </nav>
+    <a class="btn primary small head-cta" href="/#install">Get INDI</a>
+    <button class="icon-btn" id="burger" type="button" aria-expanded="false" aria-controls="nav" title="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<script>
+  // ---------- Mobile menu ----------
+  var burger = document.getElementById("burger"), nav = document.getElementById("nav");
+  burger.addEventListener("click", function () { var open = nav.classList.toggle("open"); burger.setAttribute("aria-expanded", open); });
+  nav.addEventListener("click", function (e) { if (e.target.tagName === "A") { nav.classList.remove("open"); burger.setAttribute("aria-expanded", "false"); } });
+</script>

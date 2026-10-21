@@ -1,0 +1,210 @@
+---
+// Animated diagram: equipment, drivers and server, clients, remote clients and chained servers.
+---
+<div class="stage">
+  <div class="stage-top">
+    <div class="legend"><span style="--c: var(--orange)">Commands</span><span style="--c: var(--link)">Status and images</span></div>
+    <span class="stage-hint">Same computer or across the network</span>
+  </div>
+  <div class="diagram-scroll"><svg id="diagram" viewBox="0 0 1200 600" role="img" aria-label="Diagram: equipment connects to INDI drivers in the INDI server, which clients reach on port 7624, locally or over the network"></svg></div>
+  <p class="stage-foot">Commands go from clients to devices. <em>Status and images</em> come back the same way.</p>
+</div>
+
+<style is:global>
+/* how INDI works diagram */
+.stage { background: #141414; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+.stage-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 24px; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font: 500 0.82rem/1 var(--body); color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; background: var(--c); }
+.stage-hint { font: 0.75rem/1.3 var(--mono); color: var(--muted); }
+.diagram-scroll { overflow-x: auto; background: radial-gradient(900px 420px at 15% 90%, rgba(255, 124, 4, 0.07), transparent 70%), radial-gradient(900px 420px at 85% 10%, rgba(35, 89, 245, 0.10), transparent 70%), #141414; }
+#diagram { display: block; width: 100%; min-width: 860px; height: auto; }
+.stage-foot { padding: 14px 22px; border-top: 1px solid var(--line); font-size: 1rem; color: var(--muted); }
+.stage-foot em { font-style: normal; font-weight: 600; color: var(--amber); }
+
+/* svg diagram */
+.grp { opacity: 0; transform: translateY(10px); transform-box: fill-box; transition: opacity 0.7s ease, transform 0.9s cubic-bezier(.2,.8,.2,1); }
+.grp.show { opacity: 1; transform: none; }
+.card { fill: #232323; stroke: #3d3c3c; stroke-width: 1.2; transition: stroke 0.5s, filter 0.5s; }
+.focus .card { stroke: var(--accent, #ff7c04); stroke-width: 2; filter: url(#lift); }
+.t-title { font: 600 18px var(--body); fill: #f2f2f2; }
+.t-sub { font: 400 13px var(--body); fill: #a9a9a9; }
+.t-mono { font: 400 11px var(--mono); fill: #8d8d8d; }
+.t-cap { font: 600 12px var(--mono); fill: #a9a9a9; letter-spacing: 0.14em; }
+.t-link { font: 600 13px var(--body); fill: #f2f2f2; }
+.t-link2 { font: 400 12px var(--body); fill: #a9a9a9; }
+.ico { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.link-core { fill: none; stroke-width: 2; stroke-linecap: round; opacity: 0.7; }
+.link-glow { fill: none; stroke-width: 8; stroke-linecap: round; opacity: 0.14; }
+.draw { transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+.led { fill: #3a3a3a; }
+.live .led { animation: blink 1.4s steps(1) infinite; }
+@keyframes blink { 0%, 60% { fill: #2bc77a; } 61%, 100% { fill: #145c39; } }
+#boxRect { fill: rgba(35, 89, 245, 0.04); stroke: rgba(125, 155, 255, 0.5); stroke-width: 1.5; stroke-dasharray: 7 7; animation: march 1.6s linear infinite; }
+@keyframes march { to { stroke-dashoffset: -14; } }
+@media (prefers-reduced-motion: reduce) { .grp, .draw { transition: none; } #boxRect, .live .led { animation: none; } }
+
+</style>
+
+<script>
+  // ---------- How INDI works: animated diagram ----------
+  var C = { orange: "#ff7c04", blue: "#7d9bff", amber: "#eb9e20", violet: "#5138ee", green: "#12a35c" };
+  var ICONS = {
+    mount: '<path d="M3.5 10.8 L16.3 4.2 L18.4 8.3 L5.6 14.9 Z"/><path d="M11 12.4 V15.2 M11 15.2 L6.2 21 M11 15.2 L15.8 21 M11 15.2 V21"/>',
+    camera: '<circle cx="12" cy="12.5" r="8.5"/><circle cx="12" cy="12.5" r="4.4"/><path d="M8.5 2.5 H15.5"/>',
+    focuser: '<rect x="2.5" y="8.5" width="11.5" height="6" rx="1"/><rect x="14" y="9.8" width="7" height="3.4" rx="0.6"/><path d="M7 14.5 V17.2"/><circle cx="7" cy="19" r="1.9"/>',
+    wheel: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="6.6" r="2"/><circle cx="17.1" cy="10.3" r="2"/><circle cx="15.2" cy="16.4" r="2"/><circle cx="8.8" cy="16.4" r="2"/><circle cx="6.9" cy="10.3" r="2"/>',
+    dome: '<path d="M2.5 20.5 H21.5"/><path d="M4.5 20.5 V14.5 H19.5 V20.5"/><path d="M4.8 14.5 A7.2 7.2 0 0 1 19.2 14.5"/><path d="M11 7.4 V14.5 M13 7.4 V14.5"/>',
+    plug: '<path d="M9 3 V7 M15 3 V7"/><path d="M7 7 H17 V11 A5 5 0 0 1 7 11 Z"/><path d="M12 16 V21"/>',
+    apps: '<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>',
+    laptop: '<rect x="4.5" y="5" width="15" height="10" rx="1.5"/><path d="M2.5 18.5 H21.5 L20 15 H4 Z"/>',
+    link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    usb: '<path d="M12 20 V5"/><path d="M9.6 6.2 L12 2.8 L14.4 6.2 Z"/><path d="M12 15.5 L7 12.5 V10"/><circle cx="7" cy="8.6" r="1.5"/><path d="M12 12.5 L17 9.5 V7.8"/><rect x="15.6" y="5" width="2.8" height="2.8" rx="0.3"/>',
+    serial: '<path d="M3 7.5 H21 L18.6 16.5 H5.4 Z"/><path d="M7.5 11 H16.5 M9 13.5 H15"/>',
+    network: '<rect x="3.5" y="4.5" width="17" height="12" rx="1.8"/><path d="M7.5 16.5 V19.5 H16.5 V16.5"/><path d="M8 8.5 V11 M10.7 8.5 V11 M13.3 8.5 V11 M16 8.5 V11"/>'
+  };
+  function icon(name, cx, cy, size, color) {
+    var s = size / 24;
+    return '<g class="ico" transform="translate(' + (cx - 12 * s) + "," + (cy - 12 * s) + ") scale(" + s + ')" style="color:' + color + '">' + ICONS[name] + "</g>";
+  }
+  function iconBox(x, y, w, color, name) {
+    return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + w + '" rx="' + w * 0.28 + '" fill="' + color + '" fill-opacity="0.1" stroke="' + color + '" stroke-opacity="0.3"/>' + icon(name, x + w / 2, y + w / 2, w * 0.6, color);
+  }
+  function card(x, y, w, h, r) { return '<rect class="card" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + r + '"/>'; }
+
+  var HW = [
+    ["Mount", "Points and tracks the sky", "mount"],
+    ["Camera", "Captures the images", "camera"],
+    ["Focuser", "Keeps the stars sharp", "focuser"],
+    ["Filter wheel", "Swaps color filters", "wheel"],
+    ["Dome", "Follows the telescope", "dome"]
+  ];
+  var DRV = [["EQMod Mount", "indi_eqmod_telescope"], ["ZWO Camera", "indi_asi_ccd"], ["ZWO EAF", "indi_asi_focuser"], ["ZWO EFW", "indi_asi_wheel"], ["ScopeDome", "indi_scopedome_dome"]];
+  var CONN = ["Serial", "USB", "USB", "USB", "Network"];
+  var CLI = ["KStars + Ekos", "PHD2", "Stellarium", "CCDCiel", "Python script"];
+
+  var LINKS = {};
+  for (var i = 0; i < 5; i++) {
+    var hy = 167 + i * 70, dy = 238 + i * 50;
+    LINKS["hw" + i] = { d: "M230," + hy + " C282," + hy + " 284," + dy + " 336," + dy, g: "g-wires", rev: true };
+  }
+  LINKS.proto = { d: "M560,307 L640,307", g: "g-proto", rev: true };
+  LINKS.remote = { d: "M440,474 L440,548 Q440,556 448,556 L1052,556 Q1060,556 1060,548 L1060,402", g: "g-remote", rev: true };
+  LINKS.chain = { d: "M440,82 L440,140", g: "g-chain", rev: true };
+
+  function linkSvg(id, l) {
+    return '<path class="link-glow draw" id="' + id + '-g" d="' + l.d + '" stroke="' + C.orange + '"/>' +
+      '<path class="link-core draw" id="' + id + '" d="' + l.d + '" stroke="' + C.orange + '"/>';
+  }
+  var only = function (g) { return Object.keys(LINKS).filter(function (k) { return LINKS[k].g === g; }).map(function (k) { return linkSvg(k, LINKS[k]); }).join(""); };
+
+  var svg = '<defs><filter id="lift" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="#ff7c04" flood-opacity="0.3"/></filter></defs>';
+
+  // boundary: the observatory computer
+  svg += '<g id="g-box" class="grp"><rect id="boxRect" x="296" y="118" width="606" height="380" rx="26"/>' +
+    '<rect x="676" y="104" width="210" height="28" rx="14" fill="#141414" stroke="rgba(125,155,255,0.6)"/>' +
+    '<text x="781" y="122" text-anchor="middle" style="font:600 11px var(--mono);letter-spacing:.12em;fill:#9db3ff">OBSERVATORY COMPUTER</text></g>';
+
+  // links
+  svg += '<g id="g-wires" class="grp">' + only("g-wires") + "</g>";
+  svg += '<g id="g-proto" class="grp">' + only("g-proto") + '<text x="600" y="292" text-anchor="middle" class="t-link">INDI</text><text x="600" y="330" text-anchor="middle" class="t-link2">protocol</text></g>';
+  svg += '<g id="g-remote" class="grp">' + only("g-remote") + '<text x="750" y="580" text-anchor="middle" class="t-link2">Wi-Fi, network cable or internet · TCP port 7624</text></g>';
+  svg += '<g id="g-chain" class="grp">' + only("g-chain") + '<text x="452" y="116" class="t-link2">chained</text></g>';
+  svg += '<g id="particles"></g>';
+
+  // connection chips
+  svg += '<g id="g-conn" class="grp">' + CONN.map(function (k, i) {
+    var y = (167 + i * 70 + 238 + i * 50) / 2, w = k.length * 7 + 34, x = 283 - w / 2, ic = k === "USB" ? "usb" : k === "Serial" ? "serial" : "network";
+    return '<rect x="' + x + '" y="' + (y - 11) + '" width="' + w + '" height="22" rx="11" fill="#1d1d1d" stroke="rgba(255,124,4,0.6)"/>' + icon(ic, x + 13, y, 13, C.orange) +
+      '<text x="' + (x + 24) + '" y="' + (y + 4) + '" style="font:600 11px var(--body);fill:#ffb27a">' + k + "</text>";
+  }).join("") + "</g>";
+
+  // equipment
+  svg += '<g id="g-hw" class="grp"><text x="22" y="124" class="t-cap">YOUR EQUIPMENT</text>' + HW.map(function (h, i) {
+    var y = 140 + i * 70;
+    return '<g class="hwcard">' + card(20, y, 210, 54, 12) + iconBox(30, y + 9, 36, C.orange, h[2]) +
+      '<text x="76" y="' + (y + 24) + '" style="font:600 15px var(--body);fill:#f2f2f2">' + h[0] + "</text>" +
+      '<text x="76" y="' + (y + 42) + '" style="font:400 12px var(--body);fill:#a9a9a9">' + h[1] + "</text>" +
+      '<circle class="led" cx="218" cy="' + (y + 12) + '" r="3.5" style="animation-delay:' + i * 0.37 + 's"/></g>';
+  }).join("") + "</g>";
+
+  // drivers + server
+  svg += '<g id="g-drv" class="grp">' + card(320, 140, 240, 334, 18) + iconBox(336, 156, 40, C.amber, "plug") +
+    '<text x="388" y="174" class="t-title">INDI drivers</text><text x="388" y="194" class="t-sub">indiserver · port 7624</text>' +
+    DRV.map(function (d, i) {
+      var y = 218 + i * 50;
+      return '<rect x="336" y="' + y + '" width="208" height="40" rx="9" fill="rgba(235,158,32,0.09)" stroke="rgba(235,158,32,0.35)"/>' +
+        '<circle class="led" cx="350" cy="' + (y + 20) + '" r="3.5" style="animation-delay:' + (0.2 + i * 0.29) + 's"/>' +
+        '<text x="362" y="' + (y + 17) + '" style="font:600 13px var(--body);fill:#f2f2f2">' + d[0] + "</text>" +
+        '<text x="362" y="' + (y + 32) + '" class="t-mono">' + d[1] + "</text>";
+    }).join("") + "</g>";
+
+  // clients
+  svg += '<g id="g-cli" class="grp">' + card(640, 140, 244, 334, 18) + iconBox(656, 156, 40, C.blue, "apps") +
+    '<text x="708" y="174" class="t-title">INDI clients</text><text x="708" y="194" class="t-sub">Any program that speaks INDI</text>' +
+    CLI.map(function (c, i) {
+      var y = 218 + i * 50;
+      return '<rect x="656" y="' + y + '" width="212" height="40" rx="9" fill="rgba(35,89,245,0.10)" stroke="rgba(125,155,255,0.3)"/>' +
+        '<circle cx="672" cy="' + (y + 20) + '" r="3.5" fill="#7d9bff"/>' +
+        '<text x="684" y="' + (y + 25) + '" style="font:500 14px var(--body);fill:#f2f2f2">' + c + "</text>";
+    }).join("") + "</g>";
+
+  // remote client
+  svg += '<g id="g-rcli" class="grp">' + card(950, 272, 220, 130, 18) + iconBox(966, 288, 40, C.blue, "laptop") +
+    '<text x="1018" y="306" class="t-title">Remote client</text><text x="1018" y="326" class="t-sub">On another computer</text>' +
+    '<text x="966" y="356" class="t-sub">KStars, PHD2 or a script,</text><text x="966" y="376" class="t-sub">indoors or on another continent</text></g>';
+
+  // chained server
+  svg += '<g id="g-csrv" class="grp">' + card(320, 10, 240, 72, 16) + iconBox(334, 26, 40, C.violet, "link") +
+    '<text x="386" y="42" style="font:600 15px var(--body);fill:#f2f2f2">Second observatory</text><text x="386" y="62" class="t-sub">Its own indiserver, chained</text></g>';
+
+  var svgEl = document.getElementById("diagram");
+  svgEl.innerHTML = svg;
+
+  // link draw-on
+  Object.keys(LINKS).forEach(function (id) {
+    var el = document.getElementById(id), gl = document.getElementById(id + "-g"), len = el.getTotalLength();
+    LINKS[id].el = el; LINKS[id].len = len;
+    [el, gl].forEach(function (p) { p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+  });
+  function setDrawn(id, on, delay) {
+    [LINKS[id].el, document.getElementById(id + "-g")].forEach(function (p) {
+      p.style.transitionDelay = on ? (delay || 0) + "s" : "0s";
+      p.style.strokeDashoffset = on ? 0 : LINKS[id].len;
+    });
+  }
+
+  // Full diagram: every part shown, every link drawn
+  var shown = {};
+  svgEl.querySelectorAll(".grp").forEach(function (el) { el.classList.add("show"); shown[el.id] = true; });
+  Object.keys(LINKS).forEach(function (id) { setDrawn(id, true, 0); });
+  svgEl.querySelectorAll(".hwcard, #g-drv").forEach(function (el) { el.classList.add("live"); });
+  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // particles: commands (orange) travel toward the equipment, status (blue) travels back
+  var pLayer = $("particles"), NS = "http://www.w3.org/2000/svg", parts = [];
+  Object.keys(LINKS).forEach(function (id) {
+    [[C.orange, true], [C.blue, false], [C.orange, true], [C.blue, false]].forEach(function (f, k) {
+      var c = document.createElementNS(NS, "circle");
+      c.setAttribute("r", 3.2); c.setAttribute("fill", f[0]); c.style.opacity = 0;
+      pLayer.appendChild(c);
+      parts.push({ el: c, id: id, toDevice: f[1], phase: k * 0.25 + Math.random() * 0.1, speed: id === "remote" ? 0.12 : 0.32 });
+    });
+  });
+  function frame(t) {
+    var s = t / 1000;
+    parts.forEach(function (p) {
+      var L = LINKS[p.id], on = !!shown[L.g];
+      if (!on) { p.el.style.opacity = 0; return; }
+      var u = (s * p.speed + p.phase) % 1;
+      // links marked rev are drawn from the device side; commands run against the path direction there
+      var forward = L.rev ? !p.toDevice : p.toDevice;
+      var pt = L.el.getPointAtLength((forward ? u : 1 - u) * L.len);
+      p.el.setAttribute("cx", pt.x); p.el.setAttribute("cy", pt.y);
+      p.el.style.opacity = Math.sin(u * Math.PI) * 0.95;
+    });
+    requestAnimationFrame(frame);
+  }
+
+  if (!still) requestAnimationFrame(frame);
+</script>

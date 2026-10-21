@@ -1,0 +1,91 @@
+/* Shared styles for every page: colors from the current indilib.org (charcoal page and bands,
+   near-black footer, blue and orange accents), type, header, footer and buttons. Dark only. */
+:root {
+  color-scheme: dark;
+  --bg: #1d1d1d;           /* page, same as the current site */
+  --band: #262525;         /* alternate sections, same as the current site */
+  --panel: #2c2b2b;        /* raised cards */
+  --ink: #f2f2f2;
+  --muted: #a9a9a9;
+  --line: #3a3939;
+  --blue: #2359f5;         /* current site buttons */
+  --blue-deep: #0037dd;
+  --link: #7d9bff;         /* blue lifted for text on charcoal */
+  --violet: #8f7bff;
+  --amber: #eb9e20;        /* logo orange */
+  --orange: #ff7c04;
+  --green: #2bc77a;
+  --footer: #171717;       /* current site footer */
+  --footer-ink: #a2a2a2;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: var(--link); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.08; }
+h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); font-stretch: 112%; font-weight: 750; letter-spacing: -0.01em; }
+h3 { font-size: 1.15rem; font-weight: 650; }
+p { margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+.eyebrow { display: flex; align-items: center; gap: 10px; font: 600 0.75rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.14em; color: var(--orange); }
+.eyebrow::before { content: ""; width: 26px; height: 2px; border-radius: 2px; background: var(--orange); }
+.lede { color: var(--muted); max-width: 62ch; font-size: 1.05rem; }
+section { padding-block: clamp(56px, 8vw, 100px); }
+.band { background: var(--band); }
+.sec-head { display: grid; gap: 14px; margin-bottom: 40px; }
+.sec-head.split { grid-template-columns: 1fr auto; align-items: end; }
+.sec-head.split > div { display: grid; gap: 14px; }
+@media (max-width: 720px) { .sec-head.split { grid-template-columns: 1fr; } }
+.more { font-weight: 600; text-decoration: none; white-space: nowrap; }
+.more::after { content: " →"; }
+
+/* header */
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: rgba(29, 29, 29, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 24px; padding-block: 12px; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand img { width: 38px; height: 38px; border-radius: 6px; }
+.brand b { font: 800 1.3rem/1 var(--display); font-stretch: 125%; letter-spacing: 0.02em; }
+.brand small { display: block; font: 0.68rem/1.2 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+nav.main { display: flex; gap: 2px; margin-left: auto; }
+nav.main a { color: var(--ink); text-decoration: none; font-weight: 500; font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; }
+nav.main a:hover { color: #fff; background: var(--band); }
+nav.main a.ext::after { content: "↗"; font-size: 0.8em; margin-left: 3px; color: var(--muted); }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 0.95rem/1 var(--body); padding: 13px 20px; border-radius: 10px; text-decoration: none; border: 1px solid transparent; cursor: pointer; }
+.btn.primary { background: var(--blue); color: #fff; }
+.btn.primary:hover { background: var(--blue-deep); }
+.btn.ghost { border-color: var(--line); color: var(--ink); background: transparent; }
+.btn.ghost:hover { border-color: var(--link); color: var(--link); }
+.btn.small { padding: 9px 14px; font-size: 0.88rem; }
+.icon-btn { width: 40px; height: 40px; display: none; place-items: center; border-radius: 10px; border: 1px solid var(--line); background: var(--band); color: var(--ink); cursor: pointer; }
+.icon-btn svg { width: 20px; height: 20px; }
+@media (max-width: 900px) {
+  nav.main { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px var(--gutter-r) 16px var(--gutter-l); }
+  nav.main.open { display: flex; }
+  .head-cta { margin-left: auto; }
+  .icon-btn { display: grid; }
+}
+
+/* footer */
+footer.site { background: var(--footer); color: #fff; }
+footer.site .wrap { padding-block: 52px 34px; display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 32px; }
+@media (max-width: 900px) { footer.site .wrap { grid-template-columns: 1fr 1fr; } footer.site .about { grid-column: 1 / -1; } }
+footer.site .brand { color: #fff; }
+footer.site .brand small { color: var(--footer-ink); }
+footer.site h4 { margin: 0 0 12px; font: 500 0.72rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--footer-ink); }
+footer.site ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+footer.site ul a { color: #e6e6e6; text-decoration: none; font-size: 0.93rem; }
+footer.site ul a:hover { color: #fff; text-decoration: underline; }
+footer.site .about p { color: var(--footer-ink); font-size: 0.93rem; max-width: 40ch; margin-top: 12px; }
+.legal { background: var(--footer); border-top: 1px solid #2a2a2a; }
+.legal .wrap { padding-block: 16px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font: 0.78rem/1.4 var(--mono); color: var(--footer-ink); }
+.legal a { color: var(--footer-ink); }
+.legal a:hover { color: #fff; }
