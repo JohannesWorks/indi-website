@@ -59,11 +59,19 @@ The page appears at `/tutorials/my-tutorial.html`. Topics are listed in `src/dat
 GitHub Actions copies the built site to the server with rsync, the same way as
 [drivers-docs](https://github.com/indilib/drivers-docs).
 
-| When | Where | Secrets |
-|---|---|---|
-| Pull request | Build only | none |
-| Push to `main` | [new.indilib.org](https://new.indilib.org), the test site, hidden from search engines | `REMOTE_HOST`, `REMOTE_USER`, `REMOTE_PRIVATE_KEY`, `DEPLOY_PATH` |
-| By hand: Actions → "Build and deploy website" → Run workflow, type `indilib.org` | [indilib.org](https://indilib.org) | `PROD_REMOTE_HOST`, `PROD_REMOTE_USER`, `PROD_REMOTE_PRIVATE_KEY`, `PROD_DEPLOY_PATH` |
+- **Pull request:** build only.
+- **Push to `main`**, or **Run workflow** in the Actions tab: build and deploy to the new server.
 
-The deploy uses `rsync --delete`: everything in the target folder that is not part of the site is removed.
+Secrets: `REMOTE_HOST`, `REMOTE_USER`, `REMOTE_PRIVATE_KEY`, `DEPLOY_PATH`, and `REMOTE_PORT` if SSH is not on port 22.
+The deploy uses `rsync --delete`: everything in `DEPLOY_PATH` that is not part of the site is removed.
 
+### Launch
+
+new.indilib.org and indilib.org are both served from the new server. Until launch the site is built
+for new.indilib.org and hidden from search engines (`noindex` and a closed `robots.txt`).
+
+At launch:
+
+1. Point the indilib.org DNS to the new server.
+2. Set the repository variable `SITE_URL` to `https://indilib.org` (Settings → Secrets and variables → Actions → Variables).
+3. Run the workflow. The site is rebuilt for indilib.org and opened to search engines.

@@ -1,8 +1,12 @@
 name: Build and deploy website
 
 # Pull requests: build only.
-# Push to main: build and deploy to new.indilib.org (test site).
-# indilib.org: run this workflow by hand from the Actions tab and type "indilib.org" to confirm.
+# Push to main, or "Run workflow" in the Actions tab: build and deploy to the new server.
+#
+# new.indilib.org and indilib.org are both served from the new server. Until launch the site is
+# built for new.indilib.org and hidden from search engines. At launch, after the indilib.org DNS
+# points to the new server, set the repository variable SITE_URL to https://indilib.org and run
+# this workflow again.
 
 on:
   push:
@@ -12,95 +16,41 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      confirm:
-        description: 'Deploy to the live site? Type "indilib.org" to confirm.'
-        required: true
-        default: ""
 
 concurrency:
-  group: deploy-${{ github.event_name }}-${{ github.ref }}
+  group: deploy-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  SITE_URL: ${{ vars.SITE_URL || 'https://new.indilib.org' }}
+  # Search engines are kept out until the site is built for indilib.org
+  STAGING: ${{ vars.SITE_URL != 'https://indilib.org' }}
+
 jobs:
-  check:
-    if: github.event_name == 'pull_request'
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-      - run: npm ci
-      - run: npm run build
 
-  staging:
-    name: Deploy to new.indilib.org
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-      - run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Build test site
+      - name: Build site for ${{ env.SITE_URL }}
         run: npm run build
-        env:
-          SITE_URL: https://new.indilib.org
-          # Keeps the test site out of search engines
-          STAGING: "true"
 
-      - name: rsync to new.indilib.org
+      - name: rsync to the server
+        if: github.event_name != 'pull_request'
         uses: burnett01/rsync-deployments@7.1.0
         with:
           switches: -azv --delete
           path: dist/
           remote_path: ${{ secrets.DEPLOY_PATH }}
           remote_host: ${{ secrets.REMOTE_HOST }}
+          remote_port: ${{ secrets.REMOTE_PORT || '22' }}
           remote_user: ${{ secrets.REMOTE_USER }}
           remote_key: ${{ secrets.REMOTE_PRIVATE_KEY }}
-
-  production:
-    name: Deploy to indilib.org
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check confirmation and secrets
-        env:
-          CONFIRM: ${{ inputs.confirm }}
-          HAS_SECRETS: ${{ secrets.PROD_REMOTE_HOST != '' && secrets.PROD_REMOTE_USER != '' && secrets.PROD_REMOTE_PRIVATE_KEY != '' && secrets.PROD_DEPLOY_PATH != '' }}
-        run: |
-          if [ "$CONFIRM" != "indilib.org" ]; then
-            echo "::error::Type indilib.org in the confirm box to deploy to the live site."
-            exit 1
-          fi
-          if [ "$HAS_SECRETS" != "true" ]; then
-            echo "::error::Set PROD_REMOTE_HOST, PROD_REMOTE_USER, PROD_REMOTE_PRIVATE_KEY and PROD_DEPLOY_PATH first."
-            exit 1
-          fi
-
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-      - run: npm ci
-
-      - name: Build live site
-        run: npm run build
-        env:
-          SITE_URL: https://indilib.org
-
-      - name: rsync to indilib.org
-        uses: burnett01/rsync-deployments@7.1.0
-        with:
-          switches: -azv --delete
-          path: dist/
-          remote_path: ${{ secrets.PROD_DEPLOY_PATH }}
-          remote_host: ${{ secrets.PROD_REMOTE_HOST }}
-          remote_user: ${{ secrets.PROD_REMOTE_USER }}
-          remote_key: ${{ secrets.PROD_REMOTE_PRIVATE_KEY }}
