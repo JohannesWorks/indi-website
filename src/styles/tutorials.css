@@ -37,7 +37,7 @@
 .latest { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 @media (max-width: 900px) { .latest { grid-template-columns: 1fr; } }
 .feat { display: grid; grid-template-rows: auto 1fr; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: var(--band); text-decoration: none; color: var(--ink); }
-.feat img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.feat img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
 .feat div { padding: 16px 18px 18px; display: grid; gap: 8px; align-content: start; }
 .feat h3 { font-size: 1.15rem; }
 .feat p { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
