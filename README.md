@@ -42,7 +42,7 @@ For a typo or a few sentences you don't need to install anything.
 3. Make the change. Use **Preview** to see the Markdown.
 4. Click **Commit changes…**, choose **Create a new branch** and give it a short name like `fix-features-typo`.
 5. Click **Propose changes**, then **Create pull request**.
-   Say in a sentence or two what you changed and why.
+   Fill in the template: say in a sentence or two what you changed and why.
 
 The checks start on their own. If you are a first-time contributor from a fork, a maintainer
 has to click **Approve and run** before they start.
@@ -103,7 +103,9 @@ git push -u origin my-change
 ```
 
 Git prints a link to open a pull request. You can also open one on GitHub
-(**Pull requests → New pull request**). Pick `main` as the base.
+(**Pull requests → New pull request**). Pick `main` as the base and fill in the template.
+If you changed pages, components or styles, add screenshots
+(see [Content changes and site code changes](#content-changes-and-site-code-changes)).
 
 Write commit messages like the ones in `git log`: start with the part of the site
 (`Home:`, `Tutorials:`, `News:`, `CI:`), then say what changed in plain words.
@@ -251,8 +253,29 @@ These run on GitHub for every pull request. All must pass before it can be merge
 | Build and check site → nginx and old URLs | Starts nginx with the rules in `deploy/nginx/`, serves the built site, and opens every old URL in `scripts/legacy-urls.txt` | The log lists each old URL that no longer works. Add a redirect |
 | Lint workflows | Checks the files in `.github/workflows/` with actionlint | Fix the line it names |
 | Dependency review | Fails when a pull request adds a package with a high or critical security advisory | Pick another version or package |
+| Change type and screenshots | Sorts the changed files (see below), labels the pull request, and posts a summary comment | Add screenshots to the description |
 
 `npm run check` runs the first three on your computer.
+
+### Content changes and site code changes
+
+Every pull request gets a summary comment and labels that say what kind of change it is:
+
+| Label | Files | Screenshots |
+|---|---|---|
+| `content` | Markdown and its images in `src/content/`, gallery images and list, redirects, files in `public/` | Not needed |
+| `site code` | `src/pages/`, `src/components/`, `src/layouts/`, `src/styles/`, other `src/data/` files, the Astro config, any `.astro`, `.css`, `.js` or `.html` file | **Needed** |
+| `infrastructure` | `.github/`, `deploy/`, `scripts/`, `package.json`, `package-lock.json` | Not needed, but the platform team reviews it closely |
+
+The comment also names new tutorials, news posts and pages, and warns when a page is moved or
+removed, because old links to it need a redirect.
+
+When a pull request has the `site code` label, add screenshots of each changed page to the
+description, on a wide screen and on a phone. Drag the images into the description box on GitHub.
+The check runs again when you save the description and turns green.
+
+If site code changed but nothing looks different (a refactor, a type fix), a platform team member
+can add the `no visual change` label instead.
 
 To see why a check failed, click **Details** next to it on the pull request, then open the red step.
 
@@ -286,8 +309,8 @@ Reviewers, check that:
 | `src/styles/global.css` | Colors, type, header, footer and buttons for every page |
 | `public/` | Files copied as they are: videos in `images/videos/`, `jdownloads/`, the INDI white paper in `files/`, sponsor logos |
 | `deploy/nginx/` | nginx rules for old URL patterns (see its README) |
-| `scripts/` | `check-links.mjs` checks links inside the built site; `check-old-urls.mjs` checks old URLs; `legacy-ids.mjs` writes the article number map |
-| `.github/workflows/` | `checks.yml` runs on pull requests; `deploy.yml` deploys after a merge |
+| `scripts/` | `check-links.mjs` checks links inside the built site; `classify-changes.mjs` sorts pull request changes; `check-old-urls.mjs` checks old URLs; `legacy-ids.mjs` writes the article number map |
+| `.github/workflows/` | `checks.yml` and `pr-changes.yml` run on pull requests; `deploy.yml` deploys after a merge |
 
 Other commands:
 
