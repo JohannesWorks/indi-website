@@ -361,9 +361,6 @@ command="/usr/bin/rrsync -wo /home/indi/www/indilib.org",restrict ssh-ed25519 AA
 The key can only write into that folder, and `DEPLOY_PATH` is relative to it (`/` is the folder itself).
 The variable `DEPLOY_RRSYNC_ROOT` records this folder and lets the check accept `/`.
 
-If `SITE_URL` is not `https://indilib.org`, the site is built as a test site and hidden from
-search engines (`noindex` and a closed `robots.txt`).
-
 ### Branch rules
 
 The `main protection` ruleset (Settings → Rules) enforces:
