@@ -3,8 +3,8 @@ name: Build and deploy website
 # Push to main, or "Run workflow" on main in the Actions tab: build and deploy to the new server.
 # Pull requests are checked by checks.yml.
 #
-# The deploy secrets live in the "production" environment, which only accepts the main branch.
-# A workflow on any other branch gets no secrets, even if it is edited to ask for them.
+# The job runs in the "production" environment, which only accepts the main branch,
+# so a deploy can't be started from any other branch.
 #
 # new.indilib.org and indilib.org are both served from the new server. Until launch the site is
 # built for new.indilib.org and hidden from search engines. At launch, after the indilib.org DNS
