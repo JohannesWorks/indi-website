@@ -1,0 +1,82 @@
+name: Change review
+
+# Says what a pull request changes: content (Markdown, images), site code (pages, components,
+# styles) or infrastructure (workflows, deploy, scripts). Site code changes must include
+# screenshots in the description, unless a maintainer adds the "no visual change" label.
+# Runs again when the description or the labels change, so adding screenshots turns it green.
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: pr-changes-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Change type and screenshots
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      PR_BODY: ${{ github.event.pull_request.body }}
+      PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sort changed files
+        id: classify
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" \
+            --jq '.[] | [.status, .filename, (.previous_filename // "")] | @tsv' > "$RUNNER_TEMP/files.tsv"
+          set +e
+          node scripts/classify-changes.mjs < "$RUNNER_TEMP/files.tsv" > "$RUNNER_TEMP/summary.md"
+          rc=$?
+          set -e
+          # 3 means screenshots are missing; anything else non-zero is a failure of the script itself
+          if [ "$rc" != 0 ] && [ "$rc" != 3 ]; then exit "$rc"; fi
+          echo "missing_screenshots=$([ "$rc" = 3 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # Pull requests from forks get a read-only token, so these two steps may be skipped there.
+      # The summary above and the result of this check still show on the pull request.
+      - name: Update labels
+        continue-on-error: true
+        env:
+          WANT: ${{ steps.classify.outputs.labels }}
+        run: |
+          for l in content "site code" infrastructure; do
+            case ",$WANT," in
+              *",$l,"*) gh api "repos/$GITHUB_REPOSITORY/issues/$PR/labels" -f "labels[]=$l" >/dev/null ;;
+              *) case ",$PR_LABELS," in *",$l,"*) gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/$PR/labels/${l// /%20}" >/dev/null ;; esac ;;
+            esac
+          done
+
+      - name: Post or update the summary comment
+        continue-on-error: true
+        run: |
+          id=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+            --jq '.[] | select(.body | startswith("<!-- pr-changes -->")) | .id' | head -1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@"$RUNNER_TEMP/summary.md" >/dev/null
+          else
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@"$RUNNER_TEMP/summary.md" >/dev/null
+          fi
+
+      - name: Screenshots
+        env:
+          MISSING: ${{ steps.classify.outputs.missing_screenshots }}
+        run: |
+          if [ "$MISSING" = true ]; then
+            echo "::error::This pull request changes site code. Add screenshots of the changed pages to the description."
+            exit 1
+          fi
+          echo "Nothing missing."
