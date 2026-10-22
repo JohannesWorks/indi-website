@@ -237,6 +237,7 @@ import "../styles/home.css";
         <div class="channels">
           <a class="channel" href="/support/faq.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></svg><div><h3>FAQ</h3><p>Answers to the most common setup and connection questions.</p></div></a>
           <a class="channel" href="https://github.com/indilib/indi/issues"><svg viewBox="0 0 24 24"><path d="M8 2v4M16 2v4M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M3 13h3M18 13h3M4 19l3-2M20 19l-3-2"/></svg><div><h3>Report a bug</h3><p>File an issue on GitHub. Attach logs as explained in the logs guide.</p></div></a>
+          <a class="channel" href="https://discord.gg/unB73SwbdE"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4Z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg><div><h3>Discord</h3><p>Chat with INDI and StellarMate users and developers in real time.</p></div></a>
           <a class="channel" href="/support/logs-submission.html"><svg viewBox="0 0 24 24"><path d="M14 3H6v18h12V7Z"/><path d="M14 3v4h4M9 13l2 2-2 2M13 17h3"/></svg><div><h3>Submit logs</h3><p>How to collect KStars and INDI logs when you ask for help.</p></div></a>
           <a class="channel donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=HBWELZ79SSSC6&amp;source=url"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg><div><h3>Support INDI</h3><p>INDI is built by volunteers. Donations keep the servers and the forum running.</p></div></a>
         </div>
@@ -285,14 +286,16 @@ import "../styles/home.css";
     if (!list || !note) return;
     const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
     try {
-      const res = await fetch("https://forum.indilib.org/latest.json", { headers: { Accept: "application/json" } });
+      const get = (path: string) => fetch("https://forum.indilib.org/" + path, { headers: { Accept: "application/json" } });
+      // latest.json has no category names; site.json does. Topics still show if it fails.
+      const [res, site] = await Promise.all([get("latest.json"), get("site.json").then((r) => (r.ok ? r.json() : {}), () => ({}))]);
       if (!res.ok) throw new Error(String(res.status));
       const data = await res.json();
-      const cats = new Map<number, string>((data.categories ?? []).map((c: { id: number; name: string }) => [c.id, c.name]));
+      const cats = new Map<number, string>((site.categories ?? []).map((c: { id: number; name: string }) => [c.id, c.name]));
       const topics = (data.topic_list?.topics ?? []).filter((t: { pinned: boolean }) => !t.pinned).slice(0, 5);
       if (!topics.length) throw new Error("empty");
       list.innerHTML = topics.map((t: { slug: string; id: number; title: string; posts_count: number; category_id: number }) =>
-        `<li><a href="https://forum.indilib.org/t/${t.slug}/${t.id}">${esc(t.title)}</a><span class="n">${t.posts_count - 1} replies</span><span class="cat">${esc(cats.get(t.category_id) ?? "")}</span></li>`).join("");
+        `<li><a href="https://forum.indilib.org/t/${t.slug}/${t.id}">${esc(t.title)}</a><span class="n">${t.posts_count - 1} ${t.posts_count === 2 ? "reply" : "replies"}</span><span class="cat">${esc(cats.get(t.category_id) ?? "")}</span></li>`).join("");
     } catch {
       list.innerHTML = '<li class="loading"><span>The latest topics could not be loaded here. <a href="https://forum.indilib.org">Visit the forum</a> to read them.</span></li>';
       note.hidden = true;
