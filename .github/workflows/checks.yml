@@ -76,8 +76,11 @@ jobs:
           docker exec nginx nginx -t
           curl -fsS -o /dev/null http://localhost:8080/
 
+      # /api/ is built from the INDI source by the deploy workflow only
       - name: Check old indilib.org URLs
-        run: node scripts/check-old-urls.mjs http://localhost:8080
+        run: |
+          grep -v '^/api/' scripts/legacy-urls.txt > "$RUNNER_TEMP/legacy-urls.txt"
+          node scripts/check-old-urls.mjs http://localhost:8080 "$RUNNER_TEMP/legacy-urls.txt"
 
       - name: nginx error log
         if: failure()
