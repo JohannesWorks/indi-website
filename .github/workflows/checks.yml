@@ -1,0 +1,102 @@
+name: Checks
+
+# Runs on every pull request to main. The main branch ruleset requires these jobs to pass
+# before a pull request can be merged. No secrets are used here.
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  site:
+    name: Build and check site
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: https://indilib.org
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx astro check
+
+      - name: Build site
+        run: npm run build
+
+      - name: Check links inside the site
+        run: node scripts/check-links.mjs dist
+
+      # Content with a legacyId must be listed in the nginx map
+      - name: Check legacy-ids.map is up to date
+        run: |
+          node scripts/legacy-ids.mjs
+          git diff --exit-code deploy/nginx/legacy-ids.map || {
+            echo "::error::deploy/nginx/legacy-ids.map is out of date. Run node scripts/legacy-ids.mjs and commit it."
+            exit 1
+          }
+
+      # Serve the built site with the same nginx rules as the server, then check old URLs
+      - name: Start nginx with the site's rules
+        run: |
+          cat > "$RUNNER_TEMP/nginx.conf" <<'EOF'
+          events {}
+          http {
+              include /etc/nginx/mime.types;
+              include /etc/nginx/indilib/legacy-maps.conf;
+              server {
+                  listen 8080;
+                  root /home/indi/www/indilib.org;
+                  index index.html;
+                  include /etc/nginx/indilib/legacy-locations.conf;
+              }
+          }
+          EOF
+          docker run -d --name nginx -p 8080:8080 \
+            -v "$RUNNER_TEMP/nginx.conf:/etc/nginx/nginx.conf:ro" \
+            -v "$PWD/deploy/nginx:/etc/nginx/indilib:ro" \
+            -v "$PWD/dist:/home/indi/www/indilib.org:ro" \
+            nginx:1.27-alpine
+          sleep 2
+          docker exec nginx nginx -t
+          curl -fsS -o /dev/null http://localhost:8080/
+
+      - name: Check old indilib.org URLs
+        run: node scripts/check-old-urls.mjs http://localhost:8080
+
+      - name: nginx error log
+        if: failure()
+        run: docker logs nginx 2>&1 | tail -50 || true
+
+  workflows:
+    name: Lint workflows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7 -color
+
+  dependencies:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high

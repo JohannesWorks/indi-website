@@ -23,7 +23,7 @@ npm run build    # static site in dist/
 | `src/assets/gallery/` | Gallery images |
 | `public/` | Files kept at their old paths: videos in `images/videos/`, `jdownloads/`, the INDI white paper in `files/` |
 | `deploy/nginx/` | nginx rules for old URL patterns (see its README) |
-| `scripts/` | `check-old-urls.mjs` checks old URLs; `legacy-ids.mjs` writes the article number map |
+| `scripts/` | `check-old-urls.mjs` checks old URLs; `check-links.mjs` checks links inside the built site; `legacy-ids.mjs` writes the article number map |
 | `src/styles/global.css` | Colors, type, header, footer and buttons for every page |
 | `public/` | Images and files copied as they are |
 
@@ -69,10 +69,22 @@ The page appears at `/tutorials/my-tutorial.html`. Topics are listed in `src/dat
 GitHub Actions copies the built site to the server with rsync, the same way as
 [drivers-docs](https://github.com/indilib/drivers-docs).
 
-- **Pull request:** build only.
-- **Push to `main`**, or **Run workflow** in the Actions tab: build and deploy to the new server.
+- **Pull request:** `checks.yml` runs the checks below. All must pass, and the indi-platform team
+  must approve, before the pull request can be merged. Nobody can push to `main` directly.
+- **Push to `main`**, or **Run workflow** on `main` in the Actions tab: build and deploy to the new server.
+
+Checks on every pull request:
+
+- `astro check` (types) and a full build
+- every link and image inside the built site points to a file that exists (`scripts/check-links.mjs`)
+- `deploy/nginx/legacy-ids.map` matches the content (`scripts/legacy-ids.mjs`)
+- nginx starts with the rules in `deploy/nginx/`, and the old URLs in `scripts/legacy-urls.txt` still work
+- the workflow files pass `actionlint`
+- no new dependency has a high or critical security advisory
 
 Secrets: `REMOTE_HOST`, `REMOTE_USER`, `REMOTE_PRIVATE_KEY`, `DEPLOY_PATH`, and `REMOTE_PORT` if SSH is not on port 22.
+They are stored in the `production` environment (Settings → Environments), not as repository secrets.
+That environment only accepts the `main` branch, so a workflow on any other branch can't read them.
 The deploy uses `rsync --delete`: everything in `DEPLOY_PATH` that is not part of the site is removed.
 A check step refuses top-level folders such as `/`, `~` or `/var/www`.
 
@@ -83,7 +95,7 @@ command="/usr/bin/rrsync -wo /home/indi/www/indilib.org",restrict ssh-ed25519 AA
 ```
 
 The key can only write into that folder, and `DEPLOY_PATH` is relative to it (`/` is the folder itself).
-The repository variable `DEPLOY_RRSYNC_ROOT` records this folder and lets the check accept `/`.
+The `production` environment variable `DEPLOY_RRSYNC_ROOT` records this folder and lets the check accept `/`.
 
 ### Launch
 

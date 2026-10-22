@@ -32,6 +32,7 @@ const section = "/" + (path.split("/")[1] ?? "").replace(/\.html$/, "");
 </header>
 
 <script>
+  // @ts-nocheck  plain browser JavaScript, not type-checked
   // ---------- Mobile menu ----------
   var burger = document.getElementById("burger"), nav = document.getElementById("nav");
   burger.addEventListener("click", function () { var open = nav.classList.toggle("open"); burger.setAttribute("aria-expanded", open); });
