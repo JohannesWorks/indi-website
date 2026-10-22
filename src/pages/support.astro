@@ -4,14 +4,15 @@ import PageHead from "../components/PageHead.astro";
 import HubCard from "../components/HubCard.astro";
 import "../styles/pages.css";
 ---
-<Base title="Support" description="Help with INDI: FAQ, forum, tutorials, log submission and bug reports.">
+<Base title="Support" description="Help with INDI: FAQ, forum, Discord, tutorials, log submission and bug reports.">
   <PageHead title="Support">
-    <p class="lede">Have a question or a problem with INDI? Check the FAQ, or ask on the forum so other INDI users can help. If you found a bug, report it on GitHub with your logs.</p>
+    <p class="lede">Have a question or a problem with INDI? Check the FAQ, ask on the forum so other INDI users can help, or chat with the community on Discord. If you found a bug, report it on GitHub with your logs.</p>
   </PageHead>
   <div class="wrap p-body">
     <div class="hub-grid">
       <HubCard href="/support/faq.html" icon="question" title="FAQ" text="Answers to the most common setup and connection questions." />
       <HubCard href="https://forum.indilib.org" icon="chat" title="Forum" text="Ask the community at forum.indilib.org." />
+      <HubCard href="https://discord.gg/unB73SwbdE" icon="talk" title="Discord" text="Chat with INDI and StellarMate users and developers in real time." />
       <HubCard href="/tutorials.html" icon="tutorial" title="Tutorials" text="Step-by-step guides for setup, imaging and remote control." />
       <HubCard href="/support/logs-submission.html" icon="log" title="Submit logs" text="How to collect KStars and INDI logs for a support question." />
       <HubCard href="https://github.com/indilib/indi/issues" icon="bug" title="Report a bug" text="Open an issue on GitHub. Attach your logs." />
