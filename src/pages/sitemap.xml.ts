@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 
-// All real pages (not redirects), so search engines find the new site quickly after launch.
+// All real pages (not redirects), for search engines.
 export const GET: APIRoute = async ({ site }) => {
   const fixed = ["/", "/tutorials.html", "/about.html", "/about/news.html", "/about/ekos.html", "/about/contributors.html",
     "/develop.html", "/develop/developer-manual.html", "/develop/arduino.html", "/support.html", "/support/gallery.html",

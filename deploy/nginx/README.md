@@ -21,7 +21,7 @@ In `/etc/nginx/nginx.conf`, inside `http { }`:
 include /etc/nginx/indilib/legacy-maps.conf;
 ```
 
-In the server block for `indilib.org` and `new.indilib.org` (after `root`):
+In the server block for `indilib.org` (after `root`):
 
 ```nginx
 root /home/indi/www/indilib.org;
@@ -34,15 +34,8 @@ Then `sudo nginx -t && sudo systemctl reload nginx`.
 
 ## Old images and files
 
-Other sites and old forum posts link straight to files on the old server, like
-`https://indilib.org/images/...`. Copy the old site's `images/` and `media/` folders once:
-
-```sh
-mkdir -p /home/indi/www/legacy
-rsync -a OLD_SERVER:/path/to/joomla/images /home/indi/www/legacy/
-rsync -a OLD_SERVER:/path/to/joomla/media  /home/indi/www/legacy/
-```
-
+Other sites and old forum posts link straight to old files, like `https://indilib.org/images/...`.
+These are kept in `/home/indi/www/legacy/images` and `/home/indi/www/legacy/media`.
 They live outside the deploy folder, so `rsync --delete` from GitHub Actions never touches them.
 The site's own files under `/images/` (videos) are served first.
 
@@ -54,6 +47,6 @@ after adding content with a `legacyId`, copy it to `/etc/nginx/indilib/` and rel
 ## Check
 
 ```sh
-node scripts/check-old-urls.mjs https://new.indilib.org
-node scripts/check-old-urls.mjs https://new.indilib.org path/to/search-console-export.csv
+node scripts/check-old-urls.mjs https://indilib.org
+node scripts/check-old-urls.mjs https://indilib.org path/to/search-console-export.csv
 ```

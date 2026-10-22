@@ -1,13 +1,13 @@
 // Check that old indilib.org URLs still lead somewhere on the new site.
 // Usage: node scripts/check-old-urls.mjs [base URL] [url list files...]
-//   base defaults to https://new.indilib.org, lists default to scripts/legacy-urls.txt.
+//   base defaults to https://indilib.org, lists default to scripts/legacy-urls.txt.
 //   A list can be plain paths, full URLs, or a Google Search Console CSV export.
 // Follows HTTP redirects and the site's redirect pages (meta refresh), up to 6 hops.
 import fs from "node:fs";
 import path from "node:path";
 
 const here = import.meta.dirname;
-const [base = "https://new.indilib.org", ...lists] = process.argv.slice(2);
+const [base = "https://indilib.org", ...lists] = process.argv.slice(2);
 const files = lists.length ? lists : [path.join(here, "legacy-urls.txt")];
 const OLD_HOSTS = /^https?:\/\/(www\.)?indilib\.org/;
 
