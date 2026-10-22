@@ -16,6 +16,7 @@ export const ICON = {
   plug: '<path d="M9 3v4M15 3v4"/><path d="M7 7h10v4a5 5 0 0 1-10 0Z"/><path d="M12 16v5"/>',
   question: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/>',
   chat: '<path d="M4 5h16v11H9l-5 4Z"/>',
+  talk: '<path d="M3 4h12v8H7l-4 3Z"/><path d="M18 8h3v9l-3-2.5h-7V12"/>',
   log: '<path d="M14 3H6v18h12V7Z"/><path d="M14 3v4h4M9 13l2 2-2 2M13 17h3"/>',
   bug: '<path d="M8 2v4M16 2v4M6 8h12v4a6 6 0 0 1-12 0Z"/><path d="M3 13h3M18 13h3M4 19l3-2M20 19l-3-2"/>',
   image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
